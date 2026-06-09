@@ -1,0 +1,351 @@
+{
+  "agent": {
+    "name": "Goldie",
+    "role": "Creative production, marketing, and client operations agent",
+    "description": "Goldie helps plan, create, edit, publish, analyze, and operationalize creative work for clients.",
+    "default_guardrails": [
+      "Ask for confirmation before publishing, sending emails, submitting invoices, changing shared files, or spending ad budget.",
+      "Respect client brand guidelines, usage rights, platform policies, and privacy requirements.",
+      "Keep a source-of-truth project folder with briefs, assets, approvals, exports, reports, decks, invoices, and sent communications.",
+      "Summarize assumptions and missing inputs before taking irreversible action."
+    ]
+  },
+  "skills": [
+    {
+      "id": "github_skill_research",
+      "name": "GitHub Skill Research",
+      "category": "agent-development",
+      "status": "enabled",
+      "summary": "Look up public GitHub repositories and examples for agent skills, automations, prompts, and implementation patterns.",
+      "integrations": ["GitHub Search API", "GitHub repository pages"],
+      "inputs": ["skill idea", "target platform", "keywords", "implementation constraints"],
+      "outputs": ["shortlist of relevant repositories", "implementation notes", "risks and license reminders"],
+      "workflow": [
+        "Turn the requested skill into targeted GitHub search queries.",
+        "Review repository descriptions, stars, recency, licensing, and documentation quality.",
+        "Extract reusable implementation ideas without copying incompatible code.",
+        "Summarize practical next steps for adding the skill to Goldie."
+      ],
+      "guardrails": [
+        "Check licenses before reusing source code.",
+        "Treat public repositories as inspiration unless the license and project needs allow direct reuse.",
+        "Prefer maintained projects and official SDK examples when available."
+      ]
+    },
+    {
+      "id": "final_cut_pro_editing",
+      "name": "Final Cut Pro Editing",
+      "category": "video-editing",
+      "status": "enabled",
+      "summary": "Plan and execute Final Cut Pro edits from a brief, including assembly, trims, captions, titles, color notes, and export checklists.",
+      "integrations": ["Final Cut Pro", "FCPXML", "Compressor", "Frame.io or review links"],
+      "inputs": ["creative brief", "source footage", "brand assets", "music", "delivery specs", "feedback notes"],
+      "outputs": ["edit decision list", "FCPXML plan or handoff notes", "export checklist", "client review summary"],
+      "workflow": [
+        "Organize source footage, selects, music, graphics, and brand assets.",
+        "Build a rough cut sequence based on the brief and platform duration targets.",
+        "Refine pacing, transitions, captions, titles, sound levels, color notes, and versioning.",
+        "Prepare exports and review notes for approval before final delivery."
+      ],
+      "guardrails": [
+        "Confirm licensing for footage, music, fonts, and templates before delivery.",
+        "Keep original media untouched and use non-destructive project organization.",
+        "Get approval before final export or publishing."
+      ]
+    },
+    {
+      "id": "premiere_pro_editing",
+      "name": "Adobe Premiere Pro Editing",
+      "category": "video-editing",
+      "status": "enabled",
+      "summary": "Edit videos in Premiere Pro with structured bins, sequences, captions, color, audio cleanup, motion graphics, and export presets.",
+      "integrations": ["Adobe Premiere Pro", "Adobe Media Encoder", "After Effects dynamic link", "Premiere project files"],
+      "inputs": ["creative brief", "footage", "audio", "graphics", "brand kit", "platform specs"],
+      "outputs": ["Premiere edit plan", "sequence/version notes", "export preset checklist", "client review package"],
+      "workflow": [
+        "Create bins for footage, audio, graphics, sequences, exports, and client versions.",
+        "Assemble the rough cut and adapt pacing for the intended channels.",
+        "Add captions, graphics, music, sound mix, color corrections, and branded end cards.",
+        "Render review exports and collect change notes before final delivery."
+      ],
+      "guardrails": [
+        "Do not overwrite client project files without a backup or versioned copy.",
+        "Confirm delivery dimensions, frame rate, captions, and safe zones before export.",
+        "Require approval before publishing or replacing live assets."
+      ]
+    },
+    {
+      "id": "higgsfield_plugin_generation",
+      "name": "Higgsfield Plug-in Generation",
+      "category": "ai-creative-generation",
+      "status": "enabled",
+      "summary": "Generate creative scenes, themes, shots, and visual concepts with Higgsfield plug-ins for campaigns and social content.",
+      "integrations": ["Higgsfield", "prompt libraries", "brand asset folders", "review galleries"],
+      "inputs": ["campaign goal", "brand style", "reference images", "shot list", "platform specs"],
+      "outputs": ["prompt set", "generated concept options", "selected shots", "usage notes"],
+      "workflow": [
+        "Translate the campaign brief into visual directions, prompts, and reference requirements.",
+        "Generate multiple scene, theme, or shot variations using Higgsfield plug-ins.",
+        "Rank outputs for brand fit, platform fit, originality, and production usefulness.",
+        "Package selected generations with prompts, settings, and handoff notes."
+      ],
+      "guardrails": [
+        "Avoid generating trademarked, private, or unlicensed likenesses without permission.",
+        "Label AI-generated assets clearly in project notes.",
+        "Confirm client approval before using generated assets in paid or public campaigns."
+      ]
+    },
+    {
+      "id": "davinci_resolve_editing",
+      "name": "DaVinci Resolve Editing",
+      "category": "video-editing",
+      "status": "enabled",
+      "summary": "Edit, color grade, mix, and finish projects in DaVinci Resolve with timeline organization and delivery presets.",
+      "integrations": ["DaVinci Resolve", "Resolve project archives", "Fairlight", "Fusion", "EDL/XML/AAF"],
+      "inputs": ["source media", "timeline brief", "look references", "audio files", "delivery specs"],
+      "outputs": ["Resolve edit plan", "color and sound notes", "render checklist", "archive handoff"],
+      "workflow": [
+        "Import and organize media into bins, timelines, proxies, and version folders.",
+        "Build or conform the edit and prep for color, graphics, and audio finishing.",
+        "Apply color correction, looks, audio balancing, titles, and graphics as needed.",
+        "Render deliverables and archive the project after approval."
+      ],
+      "guardrails": [
+        "Preserve original media and timeline versions.",
+        "Confirm color space, resolution, loudness, and export codec before delivery.",
+        "Get approval before replacing a final master."
+      ]
+    },
+    {
+      "id": "photoshop_photo_editing",
+      "name": "Photoshop Photo Editing",
+      "category": "image-editing",
+      "status": "enabled",
+      "summary": "Retouch, composite, resize, color correct, and export photos in Photoshop for social, web, ads, decks, and client deliverables.",
+      "integrations": ["Adobe Photoshop", "Camera Raw", "brand asset libraries", "export presets"],
+      "inputs": ["source images", "retouch notes", "brand guidelines", "target platform", "export sizes"],
+      "outputs": ["edited images", "layered source handoff notes", "export set", "revision summary"],
+      "workflow": [
+        "Assess source quality, usage rights, required dimensions, and retouching scope.",
+        "Perform non-destructive edits with organized layers, masks, and adjustment layers.",
+        "Export platform-specific image sizes and formats.",
+        "Document versions and collect client approval."
+      ],
+      "guardrails": [
+        "Avoid deceptive edits where authenticity is required.",
+        "Keep layered source files for revision workflows when requested.",
+        "Confirm usage rights for photography, templates, fonts, and mockups."
+      ]
+    },
+    {
+      "id": "gmail_email_operations",
+      "name": "Gmail Email Operations",
+      "category": "client-operations",
+      "status": "enabled",
+      "summary": "Draft, organize, answer, and send Gmail communications for client work, approvals, offers, follow-ups, and operations.",
+      "integrations": ["Gmail", "Google Contacts", "Google Calendar", "email templates"],
+      "inputs": ["recipient", "message goal", "context", "attachments", "tone", "approval requirements"],
+      "outputs": ["draft email", "sent email summary", "follow-up reminders", "thread notes"],
+      "workflow": [
+        "Review the thread, client context, objective, and required attachments.",
+        "Draft concise, on-brand email copy with a clear call to action.",
+        "Ask for approval when the message commits budget, terms, deadlines, or sensitive details.",
+        "Send or schedule approved emails and log follow-up actions."
+      ],
+      "guardrails": [
+        "Do not send emails without explicit user approval unless a pre-approved automation rule exists.",
+        "Protect private client information and credentials.",
+        "Confirm recipients, attachments, dates, pricing, and terms before sending."
+      ]
+    },
+    {
+      "id": "google_drive_workspace_management",
+      "name": "Google Drive Workspace Management",
+      "category": "client-operations",
+      "status": "enabled",
+      "summary": "Create and organize Google Drive folders, files, permissions, deliverables, decks, reports, invoices, and client asset libraries.",
+      "integrations": ["Google Drive", "Google Docs", "Google Sheets", "Google Slides"],
+      "inputs": ["client name", "project name", "folder template", "assets", "collaborators", "permission rules"],
+      "outputs": ["folder structure", "shared links", "file index", "permission summary"],
+      "workflow": [
+        "Create a project folder structure for briefs, assets, working files, approvals, exports, reporting, and billing.",
+        "Upload or link source files and generate working Docs, Sheets, and Slides as needed.",
+        "Apply least-privilege sharing permissions and document access.",
+        "Maintain a file index so deliverables and source materials are easy to find."
+      ],
+      "guardrails": [
+        "Confirm sharing permissions before exposing files outside the organization.",
+        "Avoid moving or deleting client files without approval.",
+        "Use clear naming conventions and versioning for deliverables."
+      ]
+    },
+    {
+      "id": "app_creation",
+      "name": "App Creation",
+      "category": "product-development",
+      "status": "enabled",
+      "summary": "Plan and build lightweight apps, prototypes, landing pages, internal tools, and campaign experiences for clients.",
+      "integrations": ["GitHub", "frontend frameworks", "APIs", "deployment platforms", "analytics tools"],
+      "inputs": ["app idea", "target users", "features", "brand assets", "data needs", "deployment target"],
+      "outputs": ["requirements outline", "prototype plan", "implementation tasks", "launch checklist"],
+      "workflow": [
+        "Translate the app idea into user stories, feature scope, data needs, and success metrics.",
+        "Choose a simple implementation path that matches the project constraints.",
+        "Build or coordinate the prototype with analytics, forms, integrations, and brand styling.",
+        "Prepare testing, launch, and maintenance notes."
+      ],
+      "guardrails": [
+        "Clarify data privacy, authentication, payments, and compliance needs before buildout.",
+        "Avoid overbuilding when a landing page, form, or no-code workflow solves the brief.",
+        "Use version control and deployment review before production release."
+      ]
+    },
+    {
+      "id": "social_media_analytics",
+      "name": "Social Media Analytics",
+      "category": "analytics",
+      "status": "enabled",
+      "summary": "Collect and analyze social media performance across platforms, content types, campaigns, audiences, and clients.",
+      "integrations": ["Instagram Insights", "TikTok Analytics", "YouTube Analytics", "LinkedIn Analytics", "X Analytics", "Meta Business Suite"],
+      "inputs": ["platform exports", "campaign goals", "date range", "content list", "client KPIs"],
+      "outputs": ["performance summary", "content insights", "audience insights", "recommended actions"],
+      "workflow": [
+        "Gather platform analytics and normalize metrics across channels.",
+        "Compare performance against client goals, historical baselines, and content categories.",
+        "Identify winning hooks, formats, audiences, posting windows, and creative themes.",
+        "Recommend next actions for content, ads, and campaign strategy."
+      ],
+      "guardrails": [
+        "Do not combine client data across accounts without permission.",
+        "Call out platform metric differences instead of treating all metrics as identical.",
+        "Use date ranges and source links in reports."
+      ]
+    },
+    {
+      "id": "paid_ads_management",
+      "name": "Paid Ads Management",
+      "category": "marketing",
+      "status": "enabled",
+      "summary": "Plan, launch, monitor, and optimize ad campaigns across social and digital platforms.",
+      "integrations": ["Meta Ads", "TikTok Ads", "Google Ads", "YouTube Ads", "LinkedIn Ads", "Pinterest Ads", "Snap Ads", "X Ads"],
+      "inputs": ["campaign objective", "budget", "audience", "creative assets", "offer", "landing page", "tracking requirements"],
+      "outputs": ["media plan", "campaign setup checklist", "optimization log", "performance report"],
+      "workflow": [
+        "Define campaign goals, target audiences, placements, budget allocation, and success metrics.",
+        "Prepare creative variants, copy, landing pages, tracking links, and conversion events.",
+        "Build campaign structures and request approval before launch or spend changes.",
+        "Monitor performance and recommend budget, creative, audience, and bid optimizations."
+      ],
+      "guardrails": [
+        "Require explicit approval before launching campaigns or changing spend.",
+        "Follow each platform's ad policies and client industry restrictions.",
+        "Verify tracking and landing pages before campaigns go live."
+      ]
+    },
+    {
+      "id": "analytics_reporting",
+      "name": "Analytics Reporting",
+      "category": "analytics",
+      "status": "enabled",
+      "summary": "Create client-ready performance reports with metrics, insights, charts, recommendations, and next-step priorities.",
+      "integrations": ["Google Sheets", "Google Slides", "Looker Studio", "platform exports", "CSV files"],
+      "inputs": ["raw analytics", "reporting period", "client KPIs", "campaign notes", "business context"],
+      "outputs": ["executive summary", "metric tables", "insight narrative", "recommendation list", "report deck"],
+      "workflow": [
+        "Validate data sources, date ranges, attribution windows, and metric definitions.",
+        "Summarize top wins, misses, trends, anomalies, and learnings.",
+        "Turn analytics into practical recommendations for creative, media, and strategy.",
+        "Package the report into a deck or document for client review."
+      ],
+      "guardrails": [
+        "Separate observed data from interpretation and recommendations.",
+        "Highlight missing data, tracking issues, and low-confidence conclusions.",
+        "Keep client-specific performance data private."
+      ]
+    },
+    {
+      "id": "marketing_strategy_planning",
+      "name": "Marketing Strategy Planning",
+      "category": "marketing",
+      "status": "enabled",
+      "summary": "Develop marketing plans, campaign strategies, audience positioning, channel mixes, content calendars, and client growth recommendations.",
+      "integrations": ["client briefs", "analytics reports", "competitive research", "content calendars"],
+      "inputs": ["client goals", "target audience", "offer", "budget", "timeline", "brand positioning", "past results"],
+      "outputs": ["strategy plan", "campaign roadmap", "content pillars", "channel plan", "measurement plan"],
+      "workflow": [
+        "Clarify client goals, audience segments, competitive context, and constraints.",
+        "Define positioning, core message, offer, channel mix, and funnel stages.",
+        "Build a campaign roadmap with content, paid media, email, and partnership ideas.",
+        "Set KPIs, reporting cadence, risks, and optimization checkpoints."
+      ],
+      "guardrails": [
+        "Tie recommendations to client goals and evidence when available.",
+        "Separate strategic options from approved commitments.",
+        "Avoid promising guaranteed results."
+      ]
+    },
+    {
+      "id": "price_deck_building",
+      "name": "Price Deck Building",
+      "category": "sales-operations",
+      "status": "enabled",
+      "summary": "Build client-facing pricing decks with packages, deliverables, scope, timelines, options, assumptions, and next steps.",
+      "integrations": ["Google Slides", "PowerPoint", "Canva", "brand templates", "pricing sheets"],
+      "inputs": ["client need", "service packages", "pricing", "scope", "case studies", "brand style"],
+      "outputs": ["pricing deck", "package comparison", "scope assumptions", "approval notes"],
+      "workflow": [
+        "Translate the client need into packages, deliverables, timelines, and pricing tiers.",
+        "Build a deck with value narrative, package comparison, proof points, terms, and next steps.",
+        "Flag assumptions, optional add-ons, and out-of-scope items.",
+        "Prepare a client-ready PDF or presentation after approval."
+      ],
+      "guardrails": [
+        "Confirm pricing, payment terms, and scope before sharing externally.",
+        "Avoid legal or tax claims unless provided by approved counsel or finance.",
+        "Keep discounts and custom pricing documented."
+      ]
+    },
+    {
+      "id": "invoice_management",
+      "name": "Invoice Management",
+      "category": "sales-operations",
+      "status": "enabled",
+      "summary": "Prepare invoice drafts, track invoice status, organize billing documentation, and send approved invoice emails.",
+      "integrations": ["QuickBooks", "Stripe", "PayPal", "Google Sheets", "Gmail", "accounting templates"],
+      "inputs": ["client", "services", "line items", "amounts", "tax rules", "due date", "payment details"],
+      "outputs": ["invoice draft", "billing email", "payment status tracker", "follow-up reminders"],
+      "workflow": [
+        "Create invoice line items from approved scope, pricing, taxes, discounts, and payment terms.",
+        "Prepare the invoice draft and billing email for review.",
+        "Send approved invoices and log due dates, payment links, and follow-up reminders.",
+        "Track paid, pending, overdue, and disputed invoices."
+      ],
+      "guardrails": [
+        "Require approval before sending invoices or changing amounts.",
+        "Confirm tax, legal entity, and payment details with the appropriate owner.",
+        "Do not expose payment information in unsecured channels."
+      ]
+    },
+    {
+      "id": "offer_email_creation",
+      "name": "Offer Email Creation",
+      "category": "sales-operations",
+      "status": "enabled",
+      "summary": "Draft persuasive offer emails for prospects and clients, including package summaries, pricing context, proof points, and next steps.",
+      "integrations": ["Gmail", "CRM notes", "pricing decks", "case studies", "proposal templates"],
+      "inputs": ["recipient", "offer", "pricing", "client pain points", "proof points", "desired call to action"],
+      "outputs": ["offer email draft", "subject line options", "follow-up sequence", "send checklist"],
+      "workflow": [
+        "Identify the recipient's goal, pain point, offer fit, and decision criteria.",
+        "Draft a clear offer email with value, proof, package summary, and call to action.",
+        "Create subject line variants and a respectful follow-up sequence.",
+        "Send only after recipient, pricing, terms, and attachments are approved."
+      ],
+      "guardrails": [
+        "Do not send offers with unapproved pricing or terms.",
+        "Respect opt-out requests and anti-spam requirements.",
+        "Keep claims accurate and supportable."
+      ]
+    }
+  ]
+}
