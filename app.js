@@ -11,11 +11,26 @@ const interfaceStatus = document.querySelector("#interfaceStatus");
 const copyButton = document.querySelector("#copyPlan");
 const downloadButton = document.querySelector("#downloadPlan");
 const newButton = document.querySelector("#newPlan");
+const skillGrid = document.querySelector("#skillGrid");
+const skillCategoryFilters = document.querySelector("#skillCategoryFilters");
+const providerGrid = document.querySelector("#providerGrid");
+const videoUpload = document.querySelector("#videoUpload");
+const videoBrowse = document.querySelector("#videoBrowse");
+const videoDropzone = document.querySelector("#videoDropzone");
+const videoMeta = document.querySelector("#videoMeta");
+const videoPreview = document.querySelector("#videoPreview");
+const captionStyleInput = document.querySelector("#captionStyle");
 
 let currentPlan = null;
+let registryData = null;
+let providersData = null;
+let selectedSkillIds = new Set(["autonomous_video_editing", "luma_labs_creative_agent", "opus_clips_short_form"]);
+let selectedProviderIds = new Set(GoldyEngine.DEFAULT_PROVIDERS);
+let activeSkillCategory = "all";
+let videoSource = { uploaded: false };
 
 const SAMPLE_ASK =
-  "Goldy, build a luxury black-and-gold social media pack and cinematic 4K launch video for a premium client from their website. Include close-ups, storyboards, voiceover, sound design, deck slides, website hero, editable prompts, dramatic lighting, and marketing CTAs.";
+  "Goldie, take my uploaded video and make Opus-style shorts with captions. Generate 4K b-roll in Luma Labs from Flux start frames, add Runway motion on the hero, and deliver a black-and-gold campaign pack with storyboards and social cutdowns.";
 
 function escapeHtml(value) {
   return String(value)
@@ -99,7 +114,12 @@ function getFormData() {
     services: getCheckedValues(serviceGrid),
     aspectRatios: getCheckedValues(ratioGrid),
     includeWebsiteBuild: document.querySelector("#includeWebsiteBuild").checked,
-    mustIncludeCloseups: document.querySelector("#mustIncludeCloseups").checked
+    mustIncludeCloseups: document.querySelector("#mustIncludeCloseups").checked,
+    autoEdit: document.querySelector("#autoEdit").checked,
+    providers: Array.from(selectedProviderIds),
+    selectedSkills: Array.from(selectedSkillIds),
+    captionStyle: captionStyleInput.value,
+    videoSource
   };
 }
 
@@ -111,10 +131,10 @@ function inferServicesFromCommand(command) {
   const lowered = command.toLowerCase();
   const services = new Set(["social", "cinematic", "storyboard", "audio"]);
   const keywordMap = {
-    documentary: ["documentary", "interview", "docu", "founder story"],
+    documentary: ["documentary", "interview", "docu", "founder story", "webinar", "podcast"],
     website: ["website", "landing page", "web page", "homepage", "site"],
     decks: ["deck", "slide", "presentation", "pitch"],
-    replacement: ["replace", "replacement", "remix", "retouch", "drop in", "photo", "video asset"]
+    replacement: ["replace", "replacement", "remix", "retouch", "drop in", "photo", "video asset", "b-roll", "b roll"]
   };
 
   Object.entries(keywordMap).forEach(([service, keywords]) => {
@@ -124,14 +144,60 @@ function inferServicesFromCommand(command) {
   return Array.from(services);
 }
 
+function inferProvidersFromCommand(command) {
+  const lowered = command.toLowerCase();
+  const providers = new Set(GoldyEngine.DEFAULT_PROVIDERS);
+  const keywordMap = {
+    runway: ["runway"],
+    kling: ["kling"],
+    flux: ["flux"],
+    higgsfield: ["higgsfield"],
+    opus_clips: ["opus", "clips", "shorts", "caption"],
+    seedance: ["seedance", "sea dance"],
+    cling: ["cling"],
+    nano_banana_pro: ["nano banana", "4k frame", "macro"]
+  };
+
+  Object.entries(keywordMap).forEach(([provider, keywords]) => {
+    if (keywords.some((keyword) => lowered.includes(keyword))) providers.add(provider);
+  });
+
+  return Array.from(providers);
+}
+
+function inferSkillsFromCommand(command, providers) {
+  const skills = new Set(["autonomous_video_editing", "luma_labs_creative_agent"]);
+  const lowered = command.toLowerCase();
+
+  if (lowered.includes("opus") || lowered.includes("caption") || lowered.includes("short")) {
+    skills.add("opus_clips_short_form");
+  }
+  if (providers.includes("runway")) skills.add("runway_video_generation");
+  if (providers.includes("kling")) skills.add("kling_video_generation");
+  if (providers.includes("flux")) skills.add("flux_image_generation");
+  if (providers.includes("higgsfield")) skills.add("higgsfield_plugin_generation");
+  if (providers.includes("seedance")) skills.add("seedance_motion");
+  if (providers.includes("cling")) skills.add("cling_motion");
+  if (providers.includes("nano_banana_pro")) skills.add("nano_banana_pro_frames");
+
+  return Array.from(skills);
+}
+
 function applyCommandToSetup(command) {
   const cleanedCommand = command.replace(/\s+/g, " ").trim() || SAMPLE_ASK;
   const services = inferServicesFromCommand(cleanedCommand);
-  const projectName = cleanedCommand.length > 80 ? "Goldy Command Production View" : cleanedCommand;
+  const providers = inferProvidersFromCommand(cleanedCommand);
+  const skills = inferSkillsFromCommand(cleanedCommand, providers);
+  const projectName = cleanedCommand.length > 80 ? "Goldie Command Production View" : cleanedCommand;
+
+  selectedProviderIds = new Set(providers);
+  selectedSkillIds = new Set(skills);
+  renderProviderGrid();
+  renderSkillGrid();
 
   setFieldValue("#projectName", projectName);
   setFieldValue("#brandName", "Goldin Media");
-  setFieldValue("#clientName", "Client from Goldy ask");
+  setFieldValue("#clientName", "Client from Goldie ask");
   setFieldValue(
     "#website",
     "Use the supplied website URL, pasted website copy, discovery notes, or client source assets."
@@ -141,19 +207,19 @@ function applyCommandToSetup(command) {
     "#audience",
     "clients and buyers who need premium marketing that feels cinematic, trustworthy, and conversion-ready"
   );
-  setFieldValue(
-    "#offer",
-    "a full-service Goldin Media creative production package"
-  );
+  setFieldValue("#offer", "a full-service Goldin Media creative production package");
   setFieldValue(
     "#assets",
-    "Use uploaded or described photos, videos, logos, website copy, testimonials, and brand references."
+    videoSource.uploaded
+      ? `Uploaded video: ${videoSource.fileName}`
+      : "Upload a source video or list photos, videos, logos, and brand references."
   );
   setFieldValue(
     "#references",
-    "luxury black-and-gold campaigns, cinematic AI video studios, prestige documentaries, premium social ads"
+    "luxury black-and-gold campaigns, Luma Labs, Opus Clips, Runway, Kling, Flux, prestige documentaries"
   );
   setFieldValue("#duration", "60-second hero film with 15-second and 6-second cutdowns");
+  document.querySelector("#autoEdit").checked = true;
 
   serviceGrid.querySelectorAll("input").forEach((input) => {
     input.checked = services.includes(input.value);
@@ -250,28 +316,62 @@ function renderPromptCards(promptPack) {
     .join("");
 }
 
+function renderProviderHandoffs(handoffs) {
+  return handoffs
+    .map(
+      (handoff) => `
+        <article class="provider-handoff-card ${handoff.providerId === "luma_labs" ? "primary-agent" : ""}">
+          <div class="provider-handoff-head">
+            <h4>${handoff.name}</h4>
+            <span class="provider-role">${handoff.role.replace(/-/g, " ")}</span>
+          </div>
+          <p class="muted">${handoff.tagline}</p>
+          <p><strong>Best for:</strong> ${handoff.bestFor.join(", ")}</p>
+          ${renderList(handoff.beats.slice(0, 3).map((beat) => `${beat.beat} — ${beat.motionPrompt.slice(0, 120)}…`))}
+          <p class="muted">${handoff.exportNotes}</p>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderAutonomousPipeline(pipeline) {
+  return pipeline.stages
+    .map(
+      (stage) => `
+        <article class="mini-card">
+          <h4>${stage.stage}</h4>
+          ${renderList(stage.actions)}
+        </article>
+      `
+    )
+    .join("");
+}
+
 function renderPlan(plan) {
   plan = escapeDeep(plan);
 
   output.innerHTML = `
     <section class="result-hero">
       <div>
-        <span class="eyebrow">Goldy production package</span>
+        <span class="eyebrow">Goldie production package</span>
         <h2>${plan.project.projectName}</h2>
         <p>${plan.creativeBrief.promise}</p>
         <div class="view-tabs" aria-label="Production view shortcuts">
           <a href="#view-brief">Brief</a>
+          <a href="#view-video">Video edit</a>
+          <a href="#view-providers">Providers</a>
           <a href="#view-storyboard">Storyboard</a>
           <a href="#view-prompts">Prompts</a>
           <a href="#view-social">Social</a>
-          <a href="#view-audio">Audio</a>
-          <a href="#view-build">Build</a>
+          <a href="#view-pipeline">Pipeline</a>
         </div>
       </div>
       <div class="badge-stack">
         <span>${plan.project.duration}</span>
         <span>${plan.project.aspectRatios.join(" / ")}</span>
-        <span>4K cinematic ready</span>
+        <span>${plan.autonomousPipeline.primaryCreativeAgent} lead</span>
+        <span>${plan.project.providers.length} providers</span>
       </div>
     </section>
 
@@ -285,6 +385,49 @@ function renderPlan(plan) {
         <p><strong>Typography:</strong> ${plan.creativeBrief.typography}</p>
       </div>
       ${renderList(plan.creativeBrief.successCriteria)}
+    </section>
+
+    <section class="panel" id="view-video">
+      <h3>Autonomous Video Edit</h3>
+      <p><strong>Source:</strong> ${plan.videoEdit.sourceSummary}</p>
+      <div class="split">
+        <div>
+          <h4>Opus Clips workflow</h4>
+          ${renderList(plan.videoEdit.opusClipsWorkflow)}
+        </div>
+        <div>
+          <h4>Timeline</h4>
+          ${renderList(plan.videoEdit.autonomousTimeline)}
+        </div>
+      </div>
+      <h4>B-roll shot list</h4>
+      ${renderList(plan.videoEdit.bRollShotList)}
+      <p class="muted">${plan.videoEdit.nleHandoff}</p>
+    </section>
+
+    <section class="panel" id="view-captions">
+      <h3>Captions</h3>
+      <p><strong>Style:</strong> ${plan.captionPlan.style}</p>
+      <div class="script-box">
+        <span class="eyebrow">Caption script</span>
+        <p>${plan.captionPlan.fullScript}</p>
+      </div>
+      <div class="split">
+        <div>
+          <h4>Opus Clips notes</h4>
+          ${renderList(plan.captionPlan.opusClipsNotes)}
+        </div>
+        <div>
+          <h4>Accessibility</h4>
+          ${renderList(plan.captionPlan.accessibility)}
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="view-providers">
+      <h3>Provider Handoffs</h3>
+      <p class="muted">Luma Labs routes as primary creative agent. Click providers above to change routing on the next generation.</p>
+      <div class="card-grid provider-handoff-grid">${renderProviderHandoffs(plan.providerHandoffs)}</div>
     </section>
 
     <section class="panel">
@@ -337,6 +480,16 @@ function renderPlan(plan) {
       </div>
     </section>
 
+    <section class="panel" id="view-pipeline">
+      <h3>Autonomous Pipeline</h3>
+      <p><strong>Mode:</strong> ${plan.automation.operatingMode}</p>
+      <p><strong>Providers:</strong> ${plan.automation.selectedProviders.join(", ")}</p>
+      <div class="card-grid">${renderAutonomousPipeline(plan.autonomousPipeline)}</div>
+      <h4>Approval gates</h4>
+      ${renderList(plan.autonomousPipeline.approvalGates)}
+      <p class="muted">${plan.automation.noCostNote}</p>
+    </section>
+
     <section class="panel split" id="view-build">
       <div>
         <h3>Website + Landing Page Build</h3>
@@ -349,22 +502,7 @@ function renderPlan(plan) {
         <p class="muted">${plan.deckSpec.editableGuidance}</p>
       </div>
     </section>
-
-    <section class="panel split">
-      <div>
-        <h3>Asset Replacement / Remix</h3>
-        <p><strong>Source assets:</strong> ${plan.assetReplacement.sourceAssets}</p>
-        ${renderList(plan.assetReplacement.auditChecklist)}
-        <p class="muted">${plan.assetReplacement.replacementPrompt}</p>
-      </div>
-      <div>
-        <h3>Autonomous Pipeline</h3>
-        ${renderList(plan.automation.pipeline)}
-        <p class="muted">${plan.automation.noCostNote}</p>
-      </div>
-    </section>
   `;
-
 }
 
 function fillQuickStart() {
@@ -373,23 +511,151 @@ function fillQuickStart() {
   document.querySelector("#clientName").value = "A premium service client";
   document.querySelector("#website").value = "https://example.com plus pasted homepage, offer, FAQ, and testimonial notes";
   document.querySelector("#goal").value =
-    "Create a full-service campaign package: hero film, social cutdowns, website hero, pitch deck, and cinematic story prompts.";
+    "Autonomous edit: Opus shorts with captions, Luma b-roll from Flux frames, Runway hero motion, full social pack.";
   document.querySelector("#audience").value =
     "business owners and high-value buyers who want polished marketing that feels trustworthy and cinematic";
   document.querySelector("#offer").value = "a premium done-for-you marketing and production transformation";
   document.querySelector("#assets").value =
-    "founder photos, client testimonial clips, website copy, service screenshots, logo, brand colors";
+    videoSource.uploaded ? `Uploaded: ${videoSource.fileName}` : "founder photos, webinar clip, website copy, logo";
   document.querySelector("#references").value =
-    "luxury trailers, prestige documentaries, modern AI video studio workflows, premium agency decks";
+    "Luma Labs, Opus Clips, Runway Gen-4, Flux Pro, luxury trailers, prestige documentaries";
   document.querySelector("#duration").value = "60-second hero film with 15-second and 6-second cutdowns";
+  document.querySelector("#autoEdit").checked = true;
   toneSelect.value = "luxury";
   commandPrompt.value = SAMPLE_ASK;
-  interfaceStatus.textContent = "Sample view loaded. Ask Goldy or adjust setup controls.";
+  selectedProviderIds = new Set(GoldyEngine.DEFAULT_PROVIDERS);
+  selectedSkillIds = new Set([
+    "autonomous_video_editing",
+    "luma_labs_creative_agent",
+    "opus_clips_short_form",
+    "flux_image_generation",
+    "runway_video_generation"
+  ]);
+  renderProviderGrid();
+  renderSkillGrid();
+  interfaceStatus.textContent = "Sample view loaded. Ask Goldie or adjust skills and providers.";
+}
+
+function renderSkillGrid() {
+  if (!registryData || !skillGrid) return;
+
+  const skills = GoldieSkills.listSkills(registryData, {
+    category: activeSkillCategory === "all" ? undefined : activeSkillCategory
+  });
+
+  skillGrid.innerHTML = skills
+    .map((skill) => {
+      const selected = selectedSkillIds.has(skill.id);
+      return `
+        <button
+          type="button"
+          class="skill-card ${selected ? "selected" : ""}"
+          data-skill-id="${skill.id}"
+          aria-pressed="${selected}"
+        >
+          <span class="eyebrow">${GoldieSkills.CATEGORY_LABELS[skill.category] || skill.category}</span>
+          <strong>${skill.name}</strong>
+          <p class="muted">${skill.summary}</p>
+        </button>
+      `;
+    })
+    .join("");
+}
+
+function renderSkillFilters() {
+  if (!registryData || !skillCategoryFilters) return;
+
+  const categories = ["all", ...new Set(registryData.skills.map((skill) => skill.category))];
+  skillCategoryFilters.innerHTML = categories
+    .map((category) => {
+      const label = category === "all" ? "All skills" : GoldieSkills.CATEGORY_LABELS[category] || category;
+      const active = category === activeSkillCategory ? "active" : "";
+      return `<button type="button" class="filter-chip ${active}" data-category="${category}">${label}</button>`;
+    })
+    .join("");
+}
+
+function renderProviderGrid() {
+  if (!providersData || !providerGrid) return;
+
+  const providers = GoldieSkills.listProviders(providersData);
+  providerGrid.innerHTML = providers
+    .map((provider) => {
+      const selected = selectedProviderIds.has(provider.id);
+      const isPrimary = provider.role === "primary-creative-agent";
+      return `
+        <button
+          type="button"
+          class="provider-card ${selected ? "selected" : ""} ${isPrimary ? "primary-agent" : ""}"
+          data-provider-id="${provider.id}"
+          aria-pressed="${selected}"
+        >
+          <span class="eyebrow">${provider.category.replace(/-/g, " ")}</span>
+          <strong>${provider.name}</strong>
+          ${isPrimary ? '<span class="primary-badge">Primary agent</span>' : ""}
+          <p class="muted">${provider.tagline}</p>
+          <p><small>Best for: ${provider.bestFor.slice(0, 3).join(", ")}</small></p>
+        </button>
+      `;
+    })
+    .join("");
+}
+
+async function loadGoldieRegistry() {
+  try {
+    const loaded = await GoldieSkills.loadAll();
+    registryData = loaded.registry;
+    providersData = loaded.providers;
+    renderSkillFilters();
+    renderSkillGrid();
+    renderProviderGrid();
+  } catch (error) {
+    if (skillGrid) {
+      skillGrid.innerHTML = `<p class="muted">Could not load skills registry. Serve the app over HTTP (not file://). ${escapeHtml(error.message)}</p>`;
+    }
+    if (providerGrid) {
+      providerGrid.innerHTML = `<p class="muted">Provider registry unavailable offline.</p>`;
+    }
+  }
+}
+
+function formatDuration(seconds) {
+  if (!seconds || Number.isNaN(seconds)) return "unknown duration";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.round(seconds % 60);
+  return mins ? `${mins}m ${secs}s` : `${secs}s`;
+}
+
+function handleVideoFile(file) {
+  if (!file || !file.type.startsWith("video/")) return;
+
+  const objectUrl = URL.createObjectURL(file);
+  videoPreview.src = objectUrl;
+  videoPreview.classList.remove("hidden");
+  videoMeta.classList.remove("hidden");
+
+  videoPreview.onloadedmetadata = () => {
+    videoSource = {
+      fileName: file.name,
+      duration: videoPreview.duration,
+      width: videoPreview.videoWidth,
+      height: videoPreview.videoHeight,
+      hasAudio: true,
+      uploaded: true
+    };
+    videoMeta.innerHTML = `
+      <strong>${escapeHtml(file.name)}</strong>
+      <p class="muted">${formatDuration(videoPreview.duration)} · ${videoPreview.videoWidth}×${videoPreview.videoHeight}</p>
+      <p>Ready for Opus-style clipping, captions, and autonomous b-roll planning.</p>
+    `;
+    interfaceStatus.textContent = `Video loaded: ${file.name}. Ask Goldie to auto-edit or generate.`;
+    document.querySelector("#assets").value = `Uploaded source video: ${file.name}`;
+  };
 }
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  interfaceStatus.textContent = "Goldy generated the view from setup controls.";
+  interfaceStatus.textContent = "Goldie generated the view from studio controls.";
   generateCurrentPlan();
 });
 
@@ -400,14 +666,14 @@ quickStartButton.addEventListener("click", () => {
 
 runCommandButton.addEventListener("click", () => {
   applyCommandToSetup(commandPrompt.value);
-  interfaceStatus.textContent = "Goldy built the interface view from your ask.";
+  interfaceStatus.textContent = "Goldie built the interface view from your ask.";
   generateCurrentPlan();
 });
 
 sampleAskButton.addEventListener("click", () => {
   commandPrompt.value = SAMPLE_ASK;
   applyCommandToSetup(SAMPLE_ASK);
-  interfaceStatus.textContent = "Sample ask loaded. Goldy generated the view.";
+  interfaceStatus.textContent = "Sample ask loaded. Goldie generated the view.";
   generateCurrentPlan();
 });
 
@@ -434,19 +700,78 @@ downloadButton.addEventListener("click", () => {
 newButton.addEventListener("click", () => {
   form.reset();
   toneSelect.value = "luxury";
+  document.querySelector("#autoEdit").checked = true;
   currentPlan = null;
   output.innerHTML = `
     <section class="empty-state">
-      <p>Ask Goldy in the interface above. Your working production view will appear here.</p>
+      <p>Ask Goldie or upload a video. Your working production view will appear here.</p>
     </section>
   `;
   commandPrompt.value = "";
   interfaceStatus.textContent =
-    "Goldy is standing by. Ask for a campaign, trailer, storyboard, website, documentary, deck, or social pack.";
+    "Goldie is standing by. Ask for auto-edits, Opus clips, captions, b-roll, or a full campaign.";
   copyButton.disabled = true;
   downloadButton.disabled = true;
   newButton.disabled = true;
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
+skillGrid?.addEventListener("click", (event) => {
+  const card = event.target.closest("[data-skill-id]");
+  if (!card) return;
+  const skillId = card.dataset.skillId;
+  if (selectedSkillIds.has(skillId)) selectedSkillIds.delete(skillId);
+  else selectedSkillIds.add(skillId);
+  renderSkillGrid();
+});
+
+skillCategoryFilters?.addEventListener("click", (event) => {
+  const chip = event.target.closest("[data-category]");
+  if (!chip) return;
+  activeSkillCategory = chip.dataset.category;
+  renderSkillFilters();
+  renderSkillGrid();
+});
+
+providerGrid?.addEventListener("click", (event) => {
+  const card = event.target.closest("[data-provider-id]");
+  if (!card) return;
+  const providerId = card.dataset.providerId;
+  if (selectedProviderIds.has(providerId)) {
+    if (selectedProviderIds.size > 1) selectedProviderIds.delete(providerId);
+  } else {
+    selectedProviderIds.add(providerId);
+  }
+  renderProviderGrid();
+});
+
+videoBrowse?.addEventListener("click", () => videoUpload.click());
+
+videoUpload?.addEventListener("change", () => {
+  const file = videoUpload.files?.[0];
+  if (file) handleVideoFile(file);
+});
+
+videoDropzone?.addEventListener("dragover", (event) => {
+  event.preventDefault();
+  videoDropzone.classList.add("dragover");
+});
+
+videoDropzone?.addEventListener("dragleave", () => {
+  videoDropzone.classList.remove("dragover");
+});
+
+videoDropzone?.addEventListener("drop", (event) => {
+  event.preventDefault();
+  videoDropzone.classList.remove("dragover");
+  const file = event.dataTransfer?.files?.[0];
+  if (file) handleVideoFile(file);
+});
+
+videoDropzone?.addEventListener("click", (event) => {
+  if (event.target.closest("#videoBrowse")) return;
+  videoUpload.click();
+});
+
 hydrateControls();
+loadGoldieRegistry();

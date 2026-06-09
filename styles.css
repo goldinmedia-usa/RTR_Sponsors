@@ -204,10 +204,13 @@ main {
 .agent-interface,
 .interface-panel,
 .studio-shell,
+.video-studio,
 .panel,
 .output-toolbar,
 .empty-state,
-.capabilities {
+.capabilities,
+.skills-browser,
+.provider-studio {
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background:
@@ -734,6 +737,160 @@ dd {
   border-top: 1px solid var(--line);
 }
 
+.video-studio {
+  padding: clamp(1rem, 4vw, 2rem);
+  margin-bottom: 2rem;
+}
+
+.video-dropzone {
+  margin: 1rem 0;
+  padding: 1.5rem;
+  border: 2px dashed rgba(245, 200, 91, 0.35);
+  border-radius: var(--radius-lg);
+  background: rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.video-dropzone.dragover,
+.video-dropzone:hover {
+  border-color: rgba(245, 200, 91, 0.7);
+  background: rgba(245, 200, 91, 0.06);
+}
+
+.video-dropzone-inner {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+}
+
+.video-meta {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.video-preview {
+  width: 100%;
+  max-height: 320px;
+  margin-top: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+}
+
+.caption-style-field {
+  margin-top: 1rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.filter-chip {
+  padding: 0.45rem 0.8rem;
+  border: 1px solid rgba(245, 200, 91, 0.22);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.filter-chip.active,
+.filter-chip:hover {
+  border-color: rgba(245, 200, 91, 0.65);
+  color: var(--gold);
+}
+
+.skill-grid,
+.provider-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.skill-card,
+.provider-card {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px solid rgba(245, 200, 91, 0.18);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.skill-card:hover,
+.provider-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(245, 200, 91, 0.45);
+}
+
+.skill-card.selected,
+.provider-card.selected {
+  border-color: rgba(245, 200, 91, 0.75);
+  background: rgba(245, 200, 91, 0.1);
+  box-shadow: 0 0 24px rgba(245, 200, 91, 0.12);
+}
+
+.provider-card.primary-agent {
+  border-color: rgba(245, 200, 91, 0.45);
+}
+
+.primary-badge {
+  display: inline-block;
+  width: fit-content;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(245, 200, 91, 0.18);
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.provider-handoff-grid .provider-handoff-card {
+  padding: 1rem;
+  border: 1px solid rgba(245, 200, 91, 0.16);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.provider-handoff-card.primary-agent {
+  border-color: rgba(245, 200, 91, 0.5);
+  background: rgba(245, 200, 91, 0.08);
+}
+
+.provider-handoff-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.provider-role {
+  color: var(--gold);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 @media (max-width: 920px) {
   .hero,
   .agent-interface,
@@ -754,7 +911,9 @@ dd {
   .card-grid,
   .prompt-grid,
   .brief-grid,
-  .form-grid {
+  .form-grid,
+  .skill-grid,
+  .provider-grid {
     grid-template-columns: 1fr;
   }
 }

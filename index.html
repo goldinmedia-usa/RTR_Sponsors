@@ -5,24 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="Goldy is a Goldin Media creative production agent for cinematic campaigns, social packs, storyboards, audio direction, and editable pitch assets."
+      content="Goldie is the unified Goldin Media creative agent — auto-edit video, Opus-style clips, captions, b-roll, and route across Luma Labs, Runway, Kling, Flux, Higgsfield, and more."
     >
-    <title>Goldy | Goldin Media Creative Agent</title>
+    <title>Goldie | Goldin Media Creative Agent</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="#top" aria-label="Goldy home">
+      <a class="brand" href="#top" aria-label="Goldie home">
         <span class="brand-mark">G</span>
         <span>
-          <strong>Goldy</strong>
-          <small>Goldin Media agent</small>
+          <strong>Goldie</strong>
+          <small>Goldy + Goldie unified</small>
         </span>
       </a>
       <nav aria-label="Page navigation">
-        <a href="#interface">Interface</a>
-        <a href="#studio">Setup</a>
-        <a href="#capabilities">Capabilities</a>
+        <a href="#interface">Ask</a>
+        <a href="#video">Video</a>
+        <a href="#skills">Skills</a>
+        <a href="#providers">Providers</a>
+        <a href="#studio">Studio</a>
         <a href="#output">View</a>
       </nav>
     </header>
@@ -30,59 +32,57 @@
     <main id="top">
       <section class="hero">
         <div class="hero-copy">
-          <span class="eyebrow">Full-service creative production assistant</span>
-          <h1>Make it cinematic. Make it marketable. Make it Golden.</h1>
+          <span class="eyebrow">Unified creative agent — Goldy + Goldie</span>
+          <h1>Upload. Auto-edit. Generate. Ship.</h1>
           <p>
-            Goldy turns a client brief, website, or asset list into a premium production plan:
-            social packs, 4K storyboard prompts, voiceover scripts, sound direction,
-            editable deck outlines, and website-ready campaign systems.
+            Goldie is your full creative website: drop in a video, get Opus-style clips with captions,
+            autonomous b-roll from Luma Labs, Runway, Kling, Flux, Higgsfield, Cling, and SeaDance —
+            then finish in Premiere, Resolve, or Final Cut.
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#interface">Open the interface</a>
             <button class="button ghost" id="quickStart" type="button">Load sample view</button>
           </div>
         </div>
-        <aside class="hero-card" aria-label="Goldy production promise">
+        <aside class="hero-card" aria-label="Goldie production promise">
           <div class="orb"></div>
-          <span class="eyebrow">Goldy says</span>
+          <span class="eyebrow">Goldie says</span>
           <p>
-            "Give me the offer, the audience, the assets, and the feeling.
-            I will build the campaign spine, shots, prompts, edits, audio, and packaging."
+            "Give me your video, brief, and tools. I will clip it, caption it, generate b-roll,
+            animate start and end frames, and route the whole edit across your AI stack."
           </p>
           <ul>
-            <li>Black-and-gold luxury art direction</li>
-            <li>Close-ups, drama, realism, and story</li>
-            <li>Marketing-first hooks and CTAs</li>
-            <li>Dependency-free, bring-your-own tools</li>
+            <li>Luma Labs as primary creative agent</li>
+            <li>Opus Clips-style shorts + captions</li>
+            <li>Click-through provider routing</li>
+            <li>25+ skills in one interface</li>
           </ul>
         </aside>
       </section>
 
       <section class="agent-interface" id="interface" aria-labelledby="interface-title">
         <div class="interface-panel command-panel">
-          <span class="eyebrow">Goldy command view</span>
+          <span class="eyebrow">Goldie command view</span>
           <h2 id="interface-title">Ask for the whole production</h2>
           <p>
-            Type what you want in plain language. Goldy will turn the ask into a working
-            production view with strategy, storyboards, prompts, social assets, audio,
-            deck structure, and website direction.
+            Type what you want in plain language. Goldie turns your ask into an autonomous edit plan:
+            Opus clips, captions, b-roll, Luma/Runway/Kling generations, and NLE handoff.
           </p>
           <label class="command-box">
-            What should Goldy build?
+            What should Goldie build?
             <textarea
               id="commandPrompt"
               rows="6"
-              placeholder="Example: Goldy, build a luxury black-and-gold social media pack and cinematic 4K launch video for a client from their website. Include close-ups, storyboards, voiceover, sound design, deck slides, website hero, and editable prompts."
+              placeholder="Example: Goldie, take my uploaded webinar and make Opus-style shorts with captions. Generate 4K b-roll in Luma Labs from Flux start frames, animate hooks in Runway, and finish a 60s hero in black and gold."
             ></textarea>
           </label>
           <div class="hero-actions">
-            <button class="button primary" id="runCommand" type="button">Ask Goldy</button>
+            <button class="button primary" id="runCommand" type="button">Ask Goldie</button>
             <button class="button ghost" id="sampleAsk" type="button">Use sample ask</button>
-            <a class="button ghost" href="#studio">Open setup controls</a>
+            <a class="button ghost" href="#video">Upload video</a>
           </div>
           <p class="interface-status" id="interfaceStatus">
-            Goldy is standing by. Ask for a campaign, trailer, storyboard, website, documentary,
-            deck, or social pack.
+            Goldie is standing by. Ask for auto-edits, Opus clips, captions, b-roll, or a full campaign.
           </p>
         </div>
 
@@ -91,7 +91,7 @@
             <span></span>
             <span></span>
             <span></span>
-            <strong>Goldy View</strong>
+            <strong>Goldie View</strong>
           </div>
           <div class="view-meter">
             <span>Strategy</span>
@@ -130,44 +130,60 @@
         </div>
       </section>
 
-      <section class="capabilities" id="capabilities" aria-labelledby="capabilities-title">
+      <section class="video-studio" id="video" aria-labelledby="video-title">
+        <div class="studio-heading">
+          <div>
+            <span class="eyebrow">Video ingest</span>
+            <h2 id="video-title">Drop your source video</h2>
+          </div>
+          <p>
+            Upload long-form footage for autonomous editing. Goldie analyzes hooks, plans Opus-style
+            clips with captions, and maps b-roll generation across your selected AI providers.
+          </p>
+        </div>
+        <div class="video-dropzone" id="videoDropzone">
+          <input type="file" id="videoUpload" accept="video/*" hidden>
+          <div class="video-dropzone-inner">
+            <strong>Drag a video here or click to browse</strong>
+            <p class="muted">MP4, MOV, WebM — processed locally in your browser for edit planning</p>
+            <button class="button ghost" id="videoBrowse" type="button">Choose video</button>
+          </div>
+          <div class="video-meta hidden" id="videoMeta" aria-live="polite"></div>
+          <video id="videoPreview" class="video-preview hidden" controls muted playsinline></video>
+        </div>
+        <label class="caption-style-field">
+          Caption style
+          <input id="captionStyle" type="text" value="bold gold kinetic captions on black bar">
+        </label>
+      </section>
+
+      <section class="skills-browser capabilities" id="skills" aria-labelledby="skills-title">
         <div>
-          <span class="eyebrow">Built-in skills</span>
-          <h2 id="capabilities-title">A production agency brain in one page</h2>
+          <span class="eyebrow">Goldie skills registry</span>
+          <h2 id="skills-title">Every capability in one place</h2>
+          <p class="muted">Click skills to include them in your production plan. Filter by category below.</p>
+          <div class="filter-row" id="skillCategoryFilters" role="tablist" aria-label="Skill categories"></div>
         </div>
-        <div class="capability-grid">
-          <article>
-            <h3>Campaign strategy</h3>
-            <p>Clarifies audience tension, offer hierarchy, story angle, and conversion CTA.</p>
-          </article>
-          <article>
-            <h3>Cinematic storyboard</h3>
-            <p>Creates scene cards with close-ups, camera movement, lighting, edit beats, and prompts.</p>
-          </article>
-          <article>
-            <h3>Prompt studio</h3>
-            <p>Packages image, video, motion, negative, voice, and typography prompts for your tools.</p>
-          </article>
-          <article>
-            <h3>Social media packs</h3>
-            <p>Maps one hero idea into Reels, Shorts, carousel, trailer, LinkedIn, and website cuts.</p>
-          </article>
-          <article>
-            <h3>Audio and narration</h3>
-            <p>Drafts voiceover, voice direction, music mood, room tone, impacts, and sound accents.</p>
-          </article>
-          <article>
-            <h3>Decks and websites</h3>
-            <p>Builds editable slide outlines, landing page sections, animation cues, and proof blocks.</p>
-          </article>
+        <div class="skill-grid" id="skillGrid" aria-live="polite"></div>
+      </section>
+
+      <section class="provider-studio capabilities" id="providers" aria-labelledby="providers-title">
+        <div>
+          <span class="eyebrow">AI provider routing</span>
+          <h2 id="providers-title">Click your creative stack</h2>
+          <p class="muted">
+            <strong>Luma Labs</strong> is the primary creative agent. Mix Runway, Kling, Flux,
+            Nano Banana Pro, Higgsfield, Opus Clips, Cling, and SeaDance per beat.
+          </p>
         </div>
+        <div class="provider-grid" id="providerGrid" aria-live="polite"></div>
       </section>
 
       <section class="studio-shell" id="studio" aria-labelledby="studio-title">
         <div class="studio-heading">
           <div>
-            <span class="eyebrow">Goldy Studio</span>
-            <h2 id="studio-title">Tell Goldy what to design</h2>
+            <span class="eyebrow">Goldie Studio</span>
+            <h2 id="studio-title">Tell Goldie what to design</h2>
           </div>
           <p>
             This app creates original creative direction and production prompts. It does not copy
@@ -202,7 +218,7 @@
           <fieldset>
             <legend>Creative intent</legend>
             <label>
-              What do you want Goldy to make?
+              What do you want Goldie to make?
               <textarea
                 id="goal"
                 name="goal"
@@ -238,7 +254,7 @@
                 id="assets"
                 name="assets"
                 rows="3"
-                placeholder="List the files or describe what Goldy should create, replace, or remix."
+                placeholder="List the files or describe what Goldie should create, replace, or remix."
               ></textarea>
             </label>
             <label>
@@ -269,11 +285,15 @@
                 <input id="includeWebsiteBuild" type="checkbox" checked>
                 <span>Include website / landing page buildout</span>
               </label>
+              <label class="toggle">
+                <input id="autoEdit" type="checkbox" checked>
+                <span>Autonomous edit pipeline (b-roll + captions)</span>
+              </label>
             </div>
           </fieldset>
 
           <div class="form-actions">
-            <button class="button primary" type="submit">Generate with Goldy</button>
+            <button class="button primary" type="submit">Generate with Goldie</button>
             <button class="button ghost" id="newPlan" type="button" disabled>Start over</button>
           </div>
         </form>
@@ -292,19 +312,20 @@
 
       <section id="output" class="output" aria-live="polite">
         <section class="empty-state">
-          <p>Ask Goldy in the interface above. Your working production view will appear here.</p>
+          <p>Ask Goldie or upload a video. Your working production view will appear here.</p>
         </section>
       </section>
     </main>
 
     <footer class="site-footer">
       <p>
-        Goldy creates original strategy, prompts, and production plans for Goldin Media.
-        Bring your own approved models, footage, audio tools, editors, and client permissions.
+        Goldie unifies Goldy creative planning and Goldie skills into one website.
+        Connect your Luma, Runway, Kling, Flux, Higgsfield, and Opus Clips accounts with your own API keys.
       </p>
     </footer>
 
     <script src="src/goldyEngine.js"></script>
+    <script src="src/skillsLoader.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

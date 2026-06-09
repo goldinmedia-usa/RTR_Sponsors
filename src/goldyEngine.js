@@ -150,6 +150,65 @@
 
   const ASPECT_RATIOS = ["16:9", "9:16", "1:1", "4:5"];
 
+  const PROVIDER_LIBRARY = {
+    luma_labs: {
+      name: "Luma Labs",
+      role: "primary-creative-agent",
+      tagline: "Dream Machine — cinematic image-to-video",
+      bestFor: ["hero b-roll", "start frames", "end frames", "cinematic motion"]
+    },
+    runway: {
+      name: "Runway",
+      role: "motion-finishing",
+      tagline: "Gen-3/Gen-4 — motion brush and extend",
+      bestFor: ["hero shots", "product motion", "inpaint extensions"]
+    },
+    kling: {
+      name: "Kling",
+      role: "long-form-motion",
+      tagline: "Long clips and human motion",
+      bestFor: ["documentary b-roll", "human performance", "montage plates"]
+    },
+    seedance: {
+      name: "SeaDance",
+      role: "dance-and-rhythm",
+      tagline: "Rhythmic performance motion",
+      bestFor: ["music-driven social", "performance hooks"]
+    },
+    cling: {
+      name: "Cling",
+      role: "character-motion",
+      tagline: "Animate stills with identity lock",
+      bestFor: ["loops", "website hero", "avatar motion"]
+    },
+    flux: {
+      name: "Flux",
+      role: "key-art-and-frames",
+      tagline: "Photoreal stills and start/end frames",
+      bestFor: ["storyboard frames", "4K key art", "start/end plates"]
+    },
+    nano_banana_pro: {
+      name: "Nano Banana Pro",
+      role: "4k-frame-lab",
+      tagline: "4K macro and product detail frames",
+      bestFor: ["macro hooks", "product texture", "thumbnail masters"]
+    },
+    higgsfield: {
+      name: "Higgsfield",
+      role: "plugin-scenes",
+      tagline: "Themed scene and campaign plug-ins",
+      bestFor: ["rapid concepts", "social theme packs"]
+    },
+    opus_clips: {
+      name: "Opus Clips",
+      role: "short-form-autocut",
+      tagline: "Long-to-short with AI captions",
+      bestFor: ["viral shorts", "auto captions", "hook detection"]
+    }
+  };
+
+  const DEFAULT_PROVIDERS = ["luma_labs", "flux", "nano_banana_pro", "opus_clips"];
+
   function cleanText(value, fallback) {
     if (typeof value !== "string") return fallback;
     const cleaned = value.replace(/\s+/g, " ").trim();
@@ -173,6 +232,33 @@
     const requested = toArray(services);
     const valid = requested.filter((service) => SERVICE_LIBRARY[service]);
     return valid.length ? valid : ["social", "cinematic", "storyboard", "audio"];
+  }
+
+  function normalizeProviders(providers) {
+    const requested = toArray(providers);
+    const valid = requested.filter((id) => PROVIDER_LIBRARY[id]);
+    return valid.length ? valid : DEFAULT_PROVIDERS.slice();
+  }
+
+  function normalizeVideoSource(videoSource) {
+    if (!videoSource || typeof videoSource !== "object") {
+      return {
+        fileName: "",
+        duration: 0,
+        width: 0,
+        height: 0,
+        hasAudio: false,
+        uploaded: false
+      };
+    }
+    return {
+      fileName: cleanText(videoSource.fileName, ""),
+      duration: Number(videoSource.duration) || 0,
+      width: Number(videoSource.width) || 0,
+      height: Number(videoSource.height) || 0,
+      hasAudio: Boolean(videoSource.hasAudio),
+      uploaded: Boolean(videoSource.uploaded)
+    };
   }
 
   function normalizeProject(input) {
@@ -200,7 +286,12 @@
       tone: toneKey,
       aspectRatios: requestedRatios.length ? requestedRatios : ["16:9", "9:16", "4:5"],
       mustIncludeCloseups: project.mustIncludeCloseups !== false,
-      includeWebsiteBuild: Boolean(project.includeWebsiteBuild) || normalizeServices(project.services).includes("website")
+      includeWebsiteBuild: Boolean(project.includeWebsiteBuild) || normalizeServices(project.services).includes("website"),
+      providers: normalizeProviders(project.providers),
+      selectedSkills: toArray(project.selectedSkills),
+      captionStyle: cleanText(project.captionStyle, "bold gold kinetic captions on black bar"),
+      autoEdit: project.autoEdit !== false,
+      videoSource: normalizeVideoSource(project.videoSource)
     };
   }
 
@@ -276,7 +367,7 @@
         frame: "over-the-shoulder planning, storyboard wall, website or product details in focus",
         camera: "controlled handheld, small human imperfections, believable motion",
         lighting: "soft gold key light, clean shadow separation",
-        voiceover: `Goldy turns the offer into scenes, scenes into assets, and assets into a campaign system.`,
+        voiceover: `Goldie turns the offer into scenes, scenes into assets, and assets into a campaign system.`,
         prompt: `film production planning scene, storyboard cards, laptop with elegant website layout, black and gold art direction, cinematic commercial realism`,
         edit: "Cut on a pen mark, cursor click, or light sweep."
       },
@@ -346,7 +437,7 @@
         `Most ${project.audience} do not stop for another ad.`,
         "They stop for a moment that feels like it was made for them.",
         `${project.clientName} has the story, the proof, and the offer.`,
-        "Goldy turns that into a cinematic campaign system.",
+        "Goldie turns that into a cinematic campaign system.",
         `One hero film. Platform cutdowns. Social assets. Website-ready visuals. A message built to move.`
       ].join(" ")
     };
@@ -430,20 +521,177 @@
 
   function makeAutomationPlan(project) {
     const selected = project.services.map((service) => SERVICE_LIBRARY[service].label);
+    const providerNames = project.providers.map((id) => PROVIDER_LIBRARY[id].name);
     return {
       operatingMode:
-        "Goldy acts like a production coordinator: brief, plan, prompt, storyboard, audio direct, package, and hand off editable assets.",
+        "Goldie acts as unified creative agent: brief, auto-edit, route across AI providers, caption, package, and hand off editable assets.",
       selectedCapabilities: selected,
-      pipeline: [
-        "1. Intake: brand, offer, audience, website/source assets, references.",
-        "2. Strategy: campaign angle, audience tension, offer hierarchy.",
-        "3. Direction: cinematic look, typography, lighting, camera language.",
-        "4. Generation: image prompts, video prompts, voiceover, sound, deck copy.",
-        "5. Packaging: platform exports, edit notes, captions, landing page sections.",
-        "6. QA: realism, continuity, brand clarity, CTA, legal/usage checks."
-      ],
+      selectedProviders: providerNames,
+      pipeline: project.autoEdit
+        ? [
+            "1. Intake: upload source video, brief, brand, and platform targets.",
+            "2. Analyze: detect hooks, scene changes, and caption opportunities.",
+            "3. Frames: Flux + Nano Banana Pro stills for start/end plates per beat.",
+            "4. Motion: Luma Labs primary pass; Runway/Kling/Cling/SeaDance per beat needs.",
+            "5. Autonomous edit: insert b-roll, captions, CTA end card, mix audio.",
+            "6. Shorts: Opus Clips for vertical cuts with burned-in captions.",
+            "7. Finish: NLE polish (Resolve/Premiere/FCP) after client approval.",
+            "8. QA: realism, continuity, caption accuracy, rights, and publish checklist."
+          ]
+        : [
+            "1. Intake: brand, offer, audience, website/source assets, references.",
+            "2. Strategy: campaign angle, audience tension, offer hierarchy.",
+            "3. Direction: cinematic look, typography, lighting, camera language.",
+            "4. Generation: image prompts, video prompts, voiceover, sound, deck copy.",
+            "5. Packaging: platform exports, edit notes, captions, landing page sections.",
+            "6. QA: realism, continuity, brand clarity, CTA, legal/usage checks."
+          ],
       noCostNote:
-        "This app is dependency-free and does not require paid APIs. It creates original briefs and prompts you can use with your own tools, local models, or client-approved services."
+        "Goldie creates original briefs, edit plans, and provider-specific prompts. Connect your own API keys and subscriptions for Luma, Runway, Kling, Flux, Higgsfield, and Opus Clips."
+    };
+  }
+
+  function makeCaptionPlan(project) {
+    const hooks = [
+      `Most ${project.audience} scroll past generic ads.`,
+      `${project.clientName} deserves a story that stops the scroll.`,
+      `Here is what changes when you choose ${project.offer}.`
+    ];
+    return {
+      style: project.captionStyle,
+      hooks,
+      fullScript: hooks.join(" "),
+      opusClipsNotes: [
+        "Enable auto-caption with brand font and gold highlight words.",
+        "Place hook line in first 1.5 seconds as burned-in text.",
+        "Add CTA caption card on final 2 seconds.",
+        "Export 9:16, 1:1, and 16:9 with safe zones for UI overlays."
+      ],
+      accessibility: [
+        "Keep captions under 42 characters per line where possible.",
+        "Contrast ratio: gold on black or white on black only.",
+        "Include speaker labels if multiple voices appear in source."
+      ]
+    };
+  }
+
+  function makeVideoEditPlan(project) {
+    const source = project.videoSource;
+    const durationLabel = source.uploaded
+      ? `${Math.round(source.duration)}s source (${source.width}x${source.height})`
+      : "awaiting source video upload";
+
+    return {
+      sourceSummary: source.uploaded
+        ? `Editing ${source.fileName} — ${durationLabel}${source.hasAudio ? ", with speech/audio" : ", silent or no audio detected"}.`
+        : "Upload a long-form video to activate autonomous clipping, captioning, and b-roll insertion.",
+      opusClipsWorkflow: [
+        "Upload source to Opus Clips or feed Goldie rough assembly.",
+        "Target 5–12 shorts at 15–45s for Reels/TikTok/Shorts.",
+        "Apply caption style from Goldie caption plan.",
+        "Review virality-ranked hooks; reject weak openings."
+      ],
+      autonomousTimeline: [
+        "0:00–0:03 — Pattern-break hook (macro still or strongest source moment).",
+        "0:03–0:12 — Problem tension with b-roll from Luma/Kling.",
+        "0:12–0:28 — Proof montage mixing source + generated b-roll.",
+        "0:28–0:45 — Offer + CTA with kinetic captions and end card."
+      ],
+      bRollShotList: project.services.includes("documentary")
+        ? [
+            "Interview cutaway — Kling, soft documentary key",
+            "Hands/detail macro — Nano Banana Pro",
+            "Environment wide — Luma Labs start/end frame motion",
+            "Product/service hero — Runway motion brush"
+          ]
+        : [
+            "Hook macro — Nano Banana Pro 4K close-up",
+            "Transformation montage — Luma Labs + Higgsfield theme pack",
+            "Social proof insert — source clip or Kling b-roll",
+            "CTA hero loop — Cling animate from Flux still"
+          ],
+      nleHandoff: "Export XML/EDL notes for Premiere, Resolve, or Final Cut with marker colors per provider."
+    };
+  }
+
+  function makeProviderHandoffs(project, storyboard) {
+    const tone = TONE_PRESETS[project.tone];
+    return project.providers.map((providerId) => {
+      const provider = PROVIDER_LIBRARY[providerId];
+      const beats = storyboard.map((scene, index) => ({
+        beat: scene.beat,
+        startFramePrompt: `${scene.prompt}. ${tone.palette}. Start frame for ${provider.name}.`,
+        endFramePrompt: `${scene.prompt}. ${tone.palette}. End frame for ${provider.name}.`,
+        motionPrompt: `${scene.camera}; ${scene.edit}; provider=${provider.name}; ${provider.tagline}`,
+        recommendedTool: provider.name,
+        order: index + 1
+      }));
+
+      return {
+        providerId,
+        name: provider.name,
+        role: provider.role,
+        tagline: provider.tagline,
+        bestFor: provider.bestFor,
+        beats,
+        exportNotes: `Route ${provider.name} outputs to project folder /exports/${providerId}/ with version suffix.`
+      };
+    });
+  }
+
+  function makeAutonomousEditPipeline(project, storyboard, providerHandoffs) {
+    const primary = project.providers.includes("luma_labs") ? "Luma Labs" : PROVIDER_LIBRARY[project.providers[0]].name;
+    return {
+      enabled: project.autoEdit,
+      primaryCreativeAgent: primary,
+      stages: [
+        {
+          stage: "Ingest & analyze",
+          actions: [
+            project.videoSource.uploaded
+              ? `Analyze ${project.videoSource.fileName} for hook moments and scene boundaries.`
+              : "Await source video; use storyboard-only generation mode.",
+            "Transcribe speech for caption alignment if audio present.",
+            "Map platform targets: " + project.aspectRatios.join(", ")
+          ]
+        },
+        {
+          stage: "Frame lab",
+          actions: [
+            "Flux: storyboard stills for every beat.",
+            "Nano Banana Pro: macro hook + product detail frames.",
+            "Approve start/end pairs before motion generation."
+          ]
+        },
+        {
+          stage: "Motion generation",
+          actions: providerHandoffs.map(
+            (handoff) => `${handoff.name}: ${handoff.beats.length} beats — ${handoff.role}`
+          )
+        },
+        {
+          stage: "Autonomous assembly",
+          actions: [
+            "Insert b-roll on beat markers over source or voiceover.",
+            "Apply caption style: " + project.captionStyle,
+            "Mix music bed + room tone per audio plan.",
+            "Add branded end card and CTA typography."
+          ]
+        },
+        {
+          stage: "Short-form export",
+          actions: [
+            "Opus Clips: generate vertical shorts with captions.",
+            "Export hero 16:9, cutdowns 9:16 and 4:5.",
+            "Package review link for client approval."
+          ]
+        }
+      ],
+      approvalGates: [
+        "Approve provider routing before paid API spend.",
+        "Approve caption script before burn-in.",
+        "Approve final export before publish."
+      ]
     };
   }
 
@@ -510,6 +758,21 @@
       "## Automation Pipeline",
       ...plan.automation.pipeline.map((step) => `- ${step}`),
       "",
+      "## Video Edit Plan",
+      `- Source: ${plan.videoEdit.sourceSummary}`,
+      ...plan.videoEdit.autonomousTimeline.map((step) => `- ${step}`),
+      "",
+      "## Captions",
+      `- Style: ${plan.captionPlan.style}`,
+      `- Script: ${plan.captionPlan.fullScript}`,
+      "",
+      "## Provider Handoffs",
+      ...plan.providerHandoffs.flatMap((handoff) => [
+        `### ${handoff.name}`,
+        `- Role: ${handoff.role}`,
+        ...handoff.beats.slice(0, 2).map((beat) => `- ${beat.beat}: ${beat.motionPrompt}`)
+      ]),
+      "",
       `_${plan.automation.noCostNote}_`
     ];
 
@@ -529,6 +792,10 @@
     const assetReplacement = makeAssetReplacementPlan(project);
     const automation = makeAutomationPlan(project);
     const deliverables = makeDeliverables(project);
+    const captionPlan = makeCaptionPlan(project);
+    const videoEdit = makeVideoEditPlan(project);
+    const providerHandoffs = makeProviderHandoffs(project, storyboard);
+    const autonomousPipeline = makeAutonomousEditPipeline(project, storyboard, providerHandoffs);
     const plan = {
       project,
       creativeBrief,
@@ -541,7 +808,11 @@
       deckSpec,
       assetReplacement,
       automation,
-      deliverables
+      deliverables,
+      captionPlan,
+      videoEdit,
+      providerHandoffs,
+      autonomousPipeline
     };
 
     return {
@@ -555,6 +826,8 @@
     PLATFORM_MATRIX,
     SERVICE_LIBRARY,
     TONE_PRESETS,
+    PROVIDER_LIBRARY,
+    DEFAULT_PROVIDERS,
     createGoldyPlan,
     normalizeProject
   };
