@@ -10,6 +10,24 @@ const newButton = document.querySelector("#newPlan");
 
 let currentPlan = null;
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function escapeDeep(value) {
+  if (typeof value === "string") return escapeHtml(value);
+  if (Array.isArray(value)) return value.map(escapeDeep);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, escapeDeep(item)]));
+  }
+  return value;
+}
+
 function createCheckbox({ id, label, description, checked }) {
   const wrapper = document.createElement("label");
   wrapper.className = "choice-card";
@@ -154,6 +172,8 @@ function renderPromptCards(promptPack) {
 }
 
 function renderPlan(plan) {
+  plan = escapeDeep(plan);
+
   output.innerHTML = `
     <section class="result-hero">
       <div>
