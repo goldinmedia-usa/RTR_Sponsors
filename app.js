@@ -4,11 +4,18 @@ const toneSelect = document.querySelector("#tone");
 const form = document.querySelector("#goldyForm");
 const output = document.querySelector("#output");
 const quickStartButton = document.querySelector("#quickStart");
+const commandPrompt = document.querySelector("#commandPrompt");
+const runCommandButton = document.querySelector("#runCommand");
+const sampleAskButton = document.querySelector("#sampleAsk");
+const interfaceStatus = document.querySelector("#interfaceStatus");
 const copyButton = document.querySelector("#copyPlan");
 const downloadButton = document.querySelector("#downloadPlan");
 const newButton = document.querySelector("#newPlan");
 
 let currentPlan = null;
+
+const SAMPLE_ASK =
+  "Goldy, build a luxury black-and-gold social media pack and cinematic 4K launch video for a premium client from their website. Include close-ups, storyboards, voiceover, sound design, deck slides, website hero, editable prompts, dramatic lighting, and marketing CTAs.";
 
 function escapeHtml(value) {
   return String(value)
@@ -96,6 +103,78 @@ function getFormData() {
   };
 }
 
+function setFieldValue(selector, value) {
+  document.querySelector(selector).value = value;
+}
+
+function inferServicesFromCommand(command) {
+  const lowered = command.toLowerCase();
+  const services = new Set(["social", "cinematic", "storyboard", "audio"]);
+  const keywordMap = {
+    documentary: ["documentary", "interview", "docu", "founder story"],
+    website: ["website", "landing page", "web page", "homepage", "site"],
+    decks: ["deck", "slide", "presentation", "pitch"],
+    replacement: ["replace", "replacement", "remix", "retouch", "drop in", "photo", "video asset"]
+  };
+
+  Object.entries(keywordMap).forEach(([service, keywords]) => {
+    if (keywords.some((keyword) => lowered.includes(keyword))) services.add(service);
+  });
+
+  return Array.from(services);
+}
+
+function applyCommandToSetup(command) {
+  const cleanedCommand = command.replace(/\s+/g, " ").trim() || SAMPLE_ASK;
+  const services = inferServicesFromCommand(cleanedCommand);
+  const projectName = cleanedCommand.length > 80 ? "Goldy Command Production View" : cleanedCommand;
+
+  setFieldValue("#projectName", projectName);
+  setFieldValue("#brandName", "Goldin Media");
+  setFieldValue("#clientName", "Client from Goldy ask");
+  setFieldValue(
+    "#website",
+    "Use the supplied website URL, pasted website copy, discovery notes, or client source assets."
+  );
+  setFieldValue("#goal", cleanedCommand);
+  setFieldValue(
+    "#audience",
+    "clients and buyers who need premium marketing that feels cinematic, trustworthy, and conversion-ready"
+  );
+  setFieldValue(
+    "#offer",
+    "a full-service Goldin Media creative production package"
+  );
+  setFieldValue(
+    "#assets",
+    "Use uploaded or described photos, videos, logos, website copy, testimonials, and brand references."
+  );
+  setFieldValue(
+    "#references",
+    "luxury black-and-gold campaigns, cinematic AI video studios, prestige documentaries, premium social ads"
+  );
+  setFieldValue("#duration", "60-second hero film with 15-second and 6-second cutdowns");
+
+  serviceGrid.querySelectorAll("input").forEach((input) => {
+    input.checked = services.includes(input.value);
+  });
+  ratioGrid.querySelectorAll("input").forEach((input) => {
+    input.checked = ["16:9", "9:16", "4:5"].includes(input.value);
+  });
+  document.querySelector("#includeWebsiteBuild").checked = services.includes("website");
+  document.querySelector("#mustIncludeCloseups").checked = true;
+  toneSelect.value = cleanedCommand.toLowerCase().includes("documentary") ? "documentary" : "luxury";
+}
+
+function generateCurrentPlan({ scrollTarget = output } = {}) {
+  currentPlan = GoldyEngine.createGoldyPlan(getFormData());
+  renderPlan(currentPlan);
+  copyButton.disabled = false;
+  downloadButton.disabled = false;
+  newButton.disabled = false;
+  scrollTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function renderList(items) {
   return `<ul>${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
 }
@@ -180,6 +259,14 @@ function renderPlan(plan) {
         <span class="eyebrow">Goldy production package</span>
         <h2>${plan.project.projectName}</h2>
         <p>${plan.creativeBrief.promise}</p>
+        <div class="view-tabs" aria-label="Production view shortcuts">
+          <a href="#view-brief">Brief</a>
+          <a href="#view-storyboard">Storyboard</a>
+          <a href="#view-prompts">Prompts</a>
+          <a href="#view-social">Social</a>
+          <a href="#view-audio">Audio</a>
+          <a href="#view-build">Build</a>
+        </div>
       </div>
       <div class="badge-stack">
         <span>${plan.project.duration}</span>
@@ -188,7 +275,7 @@ function renderPlan(plan) {
       </div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="view-brief">
       <h3>Creative Brief</h3>
       <div class="brief-grid">
         <p><strong>Positioning:</strong> ${plan.creativeBrief.positioning}</p>
@@ -222,22 +309,22 @@ function renderPlan(plan) {
       </div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="view-storyboard">
       <h3>Cinematic Storyboard</h3>
       <div class="storyboard">${renderStoryboard(plan.storyboard)}</div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="view-prompts">
       <h3>Prompt Studio</h3>
       <div class="prompt-grid">${renderPromptCards(plan.promptPack)}</div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="view-social">
       <h3>Social Media Pack</h3>
       <div class="card-grid">${renderSocialPack(plan.socialPack)}</div>
     </section>
 
-    <section class="panel split">
+    <section class="panel split" id="view-audio">
       <div>
         <h3>Voiceover + Sound</h3>
         <p><strong>Voice:</strong> ${plan.audioPlan.voiceDirection}</p>
@@ -250,7 +337,7 @@ function renderPlan(plan) {
       </div>
     </section>
 
-    <section class="panel split">
+    <section class="panel split" id="view-build">
       <div>
         <h3>Website + Landing Page Build</h3>
         <p>${plan.websiteBuild.inputInstruction}</p>
@@ -278,9 +365,6 @@ function renderPlan(plan) {
     </section>
   `;
 
-  copyButton.disabled = false;
-  downloadButton.disabled = false;
-  newButton.disabled = false;
 }
 
 function fillQuickStart() {
@@ -299,16 +383,33 @@ function fillQuickStart() {
     "luxury trailers, prestige documentaries, modern AI video studio workflows, premium agency decks";
   document.querySelector("#duration").value = "60-second hero film with 15-second and 6-second cutdowns";
   toneSelect.value = "luxury";
+  commandPrompt.value = SAMPLE_ASK;
+  interfaceStatus.textContent = "Sample view loaded. Ask Goldy or adjust setup controls.";
 }
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  currentPlan = GoldyEngine.createGoldyPlan(getFormData());
-  renderPlan(currentPlan);
-  output.scrollIntoView({ behavior: "smooth", block: "start" });
+  interfaceStatus.textContent = "Goldy generated the view from setup controls.";
+  generateCurrentPlan();
 });
 
-quickStartButton.addEventListener("click", fillQuickStart);
+quickStartButton.addEventListener("click", () => {
+  fillQuickStart();
+  generateCurrentPlan();
+});
+
+runCommandButton.addEventListener("click", () => {
+  applyCommandToSetup(commandPrompt.value);
+  interfaceStatus.textContent = "Goldy built the interface view from your ask.";
+  generateCurrentPlan();
+});
+
+sampleAskButton.addEventListener("click", () => {
+  commandPrompt.value = SAMPLE_ASK;
+  applyCommandToSetup(SAMPLE_ASK);
+  interfaceStatus.textContent = "Sample ask loaded. Goldy generated the view.";
+  generateCurrentPlan();
+});
 
 copyButton.addEventListener("click", async () => {
   if (!currentPlan) return;
@@ -336,9 +437,12 @@ newButton.addEventListener("click", () => {
   currentPlan = null;
   output.innerHTML = `
     <section class="empty-state">
-      <p>Tell Goldy what you want to make. Your production plan will appear here.</p>
+      <p>Ask Goldy in the interface above. Your working production view will appear here.</p>
     </section>
   `;
+  commandPrompt.value = "";
+  interfaceStatus.textContent =
+    "Goldy is standing by. Ask for a campaign, trailer, storyboard, website, documentary, deck, or social pack.";
   copyButton.disabled = true;
   downloadButton.disabled = true;
   newButton.disabled = true;

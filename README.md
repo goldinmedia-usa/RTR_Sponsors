@@ -1,8 +1,9 @@
 # Goldy Creative Agent
 
 Goldy is a dependency-free creative production assistant for Goldin Media. It runs as a
-single-page web app and turns a client brief, website/source notes, and asset list into a
-client-ready production package:
+single-page web app with a command-first interface: ask Goldy what to build, then use the
+generated production view as the working dashboard. It turns a client brief, website/source
+notes, and asset list into a client-ready production package:
 
 - cinematic campaign strategy
 - 4K storyboard and shot prompts

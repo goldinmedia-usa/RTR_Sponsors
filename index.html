@@ -20,9 +20,10 @@
         </span>
       </a>
       <nav aria-label="Page navigation">
-        <a href="#studio">Studio</a>
+        <a href="#interface">Interface</a>
+        <a href="#studio">Setup</a>
         <a href="#capabilities">Capabilities</a>
-        <a href="#output">Output</a>
+        <a href="#output">View</a>
       </nav>
     </header>
 
@@ -37,8 +38,8 @@
             editable deck outlines, and website-ready campaign systems.
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#studio">Open the studio</a>
-            <button class="button ghost" id="quickStart" type="button">Load a sample brief</button>
+            <a class="button primary" href="#interface">Open the interface</a>
+            <button class="button ghost" id="quickStart" type="button">Load sample view</button>
           </div>
         </div>
         <aside class="hero-card" aria-label="Goldy production promise">
@@ -55,6 +56,78 @@
             <li>Dependency-free, bring-your-own tools</li>
           </ul>
         </aside>
+      </section>
+
+      <section class="agent-interface" id="interface" aria-labelledby="interface-title">
+        <div class="interface-panel command-panel">
+          <span class="eyebrow">Goldy command view</span>
+          <h2 id="interface-title">Ask for the whole production</h2>
+          <p>
+            Type what you want in plain language. Goldy will turn the ask into a working
+            production view with strategy, storyboards, prompts, social assets, audio,
+            deck structure, and website direction.
+          </p>
+          <label class="command-box">
+            What should Goldy build?
+            <textarea
+              id="commandPrompt"
+              rows="6"
+              placeholder="Example: Goldy, build a luxury black-and-gold social media pack and cinematic 4K launch video for a client from their website. Include close-ups, storyboards, voiceover, sound design, deck slides, website hero, and editable prompts."
+            ></textarea>
+          </label>
+          <div class="hero-actions">
+            <button class="button primary" id="runCommand" type="button">Ask Goldy</button>
+            <button class="button ghost" id="sampleAsk" type="button">Use sample ask</button>
+            <a class="button ghost" href="#studio">Open setup controls</a>
+          </div>
+          <p class="interface-status" id="interfaceStatus">
+            Goldy is standing by. Ask for a campaign, trailer, storyboard, website, documentary,
+            deck, or social pack.
+          </p>
+        </div>
+
+        <div class="interface-panel view-screen" aria-label="Goldy production dashboard">
+          <div class="screen-topbar">
+            <span></span>
+            <span></span>
+            <span></span>
+            <strong>Goldy View</strong>
+          </div>
+          <div class="view-meter">
+            <span>Strategy</span>
+            <div><i style="width: 92%"></i></div>
+          </div>
+          <div class="view-meter">
+            <span>Storyboard</span>
+            <div><i style="width: 86%"></i></div>
+          </div>
+          <div class="view-meter">
+            <span>Prompts</span>
+            <div><i style="width: 94%"></i></div>
+          </div>
+          <div class="timeline-preview">
+            <article>
+              <small>01</small>
+              <strong>Hook close-up</strong>
+              <p>Macro texture, dramatic gold rim, hard attention break.</p>
+            </article>
+            <article>
+              <small>02</small>
+              <strong>Problem pressure</strong>
+              <p>Real client tension, editorial composition, controlled shadows.</p>
+            </article>
+            <article>
+              <small>03</small>
+              <strong>Proof montage</strong>
+              <p>Results, testimonials, cinematic product/service details.</p>
+            </article>
+            <article>
+              <small>04</small>
+              <strong>CTA finish</strong>
+              <p>Black-and-gold logo resolve, premium title, clean next step.</p>
+            </article>
+          </div>
+        </div>
       </section>
 
       <section class="capabilities" id="capabilities" aria-labelledby="capabilities-title">
@@ -208,8 +281,8 @@
 
       <section class="output-toolbar" aria-label="Output actions">
         <div>
-          <span class="eyebrow">Production output</span>
-          <h2>Client-ready plan</h2>
+          <span class="eyebrow">Production view</span>
+          <h2>Your working interface</h2>
         </div>
         <div class="toolbar-actions">
           <button class="button ghost" id="copyPlan" type="button" disabled>Copy plan</button>
@@ -219,7 +292,7 @@
 
       <section id="output" class="output" aria-live="polite">
         <section class="empty-state">
-          <p>Tell Goldy what you want to make. Your production plan will appear here.</p>
+          <p>Ask Goldy in the interface above. Your working production view will appear here.</p>
         </section>
       </section>
     </main>

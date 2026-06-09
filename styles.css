@@ -201,6 +201,8 @@ main {
 }
 
 .hero-card,
+.agent-interface,
+.interface-panel,
 .studio-shell,
 .panel,
 .output-toolbar,
@@ -232,6 +234,149 @@ main {
   padding-left: 1.1rem;
   color: var(--muted);
   line-height: 1.7;
+}
+
+.agent-interface {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.85fr);
+  gap: 1rem;
+  padding: 1rem;
+  margin: 0 0 2rem;
+}
+
+.interface-panel {
+  padding: clamp(1rem, 4vw, 1.5rem);
+}
+
+.command-panel h2 {
+  max-width: 9ch;
+}
+
+.command-panel p,
+.interface-status {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.command-box {
+  margin: 1rem 0;
+}
+
+.command-box textarea {
+  min-height: 11rem;
+  border-color: rgba(245, 200, 91, 0.34);
+  background:
+    linear-gradient(135deg, rgba(245, 200, 91, 0.08), transparent),
+    rgba(0, 0, 0, 0.64);
+  font-size: 1.02rem;
+}
+
+.interface-status {
+  margin: 1rem 0 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(245, 200, 91, 0.2);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.view-screen {
+  position: relative;
+  overflow: hidden;
+  align-self: stretch;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(245, 200, 91, 0.2), transparent 16rem),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.06), transparent 45%),
+    #0c0a07;
+}
+
+.view-screen::after {
+  position: absolute;
+  right: -4rem;
+  bottom: -5rem;
+  width: 15rem;
+  height: 15rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(245, 200, 91, 0.32), transparent 70%);
+  content: "";
+}
+
+.screen-topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(245, 200, 91, 0.14);
+}
+
+.screen-topbar span {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 999px;
+  background: var(--gold-deep);
+}
+
+.screen-topbar span:first-child {
+  background: #f0b34d;
+}
+
+.screen-topbar strong {
+  margin-left: auto;
+  color: var(--gold);
+}
+
+.view-meter {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 0.8rem;
+  align-items: center;
+  margin-bottom: 0.9rem;
+  color: var(--muted);
+}
+
+.view-meter div {
+  overflow: hidden;
+  height: 0.58rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.view-meter i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold), #fff2b7);
+  box-shadow: 0 0 22px rgba(245, 200, 91, 0.36);
+}
+
+.timeline-preview {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.4rem;
+}
+
+.timeline-preview article {
+  display: grid;
+  grid-template-columns: 2.3rem 1fr;
+  gap: 0.2rem 0.75rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(245, 200, 91, 0.15);
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.timeline-preview small {
+  grid-row: span 2;
+  color: var(--gold);
+  font-weight: 900;
+}
+
+.timeline-preview p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .orb {
@@ -507,8 +652,29 @@ textarea {
   text-align: center;
 }
 
+.view-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.view-tabs a {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(245, 200, 91, 0.26);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--gold);
+  font-size: 0.88rem;
+}
+
+.view-tabs a:hover {
+  border-color: rgba(245, 200, 91, 0.7);
+}
+
 .panel {
   padding: clamp(1rem, 3vw, 1.5rem);
+  scroll-margin-top: 6rem;
 }
 
 .panel h3 {
@@ -570,6 +736,7 @@ dd {
 
 @media (max-width: 920px) {
   .hero,
+  .agent-interface,
   .capabilities,
   .studio-heading,
   .result-hero,
