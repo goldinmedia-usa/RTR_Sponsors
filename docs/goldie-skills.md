@@ -88,11 +88,11 @@ for explicit approval before:
 The helper script uses only the Python standard library.
 
 ```bash
-python scripts/goldie_skills.py validate
-python scripts/goldie_skills.py list
-python scripts/goldie_skills.py list --category video-editing
-python scripts/goldie_skills.py show paid_ads_management
-python scripts/goldie_skills.py search-github "ai agent skills"
+python3 scripts/goldie_skills.py validate
+python3 scripts/goldie_skills.py list
+python3 scripts/goldie_skills.py list --category video-editing
+python3 scripts/goldie_skills.py show paid_ads_management
+python3 scripts/goldie_skills.py search-github "ai agent skills"
 ```
 
 For higher GitHub API rate limits, set `GITHUB_TOKEN` before using
@@ -105,4 +105,4 @@ For higher GitHub API rate limits, set `GITHUB_TOKEN` before using
 3. Include all required fields.
 4. Add approval guardrails for spend, publishing, external sharing, client data,
    and legally sensitive communications.
-5. Run `python scripts/goldie_skills.py validate`.
+5. Run `python3 scripts/goldie_skills.py validate`.

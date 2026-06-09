@@ -18,19 +18,19 @@ Supporting documentation and CLI utilities live at:
 Validate the registry:
 
 ```bash
-python scripts/goldie_skills.py validate
+python3 scripts/goldie_skills.py validate
 ```
 
 List available skills:
 
 ```bash
-python scripts/goldie_skills.py list
+python3 scripts/goldie_skills.py list
 ```
 
 Look up public GitHub examples for new agent skills:
 
 ```bash
-python scripts/goldie_skills.py search-github "ai agent skills"
+python3 scripts/goldie_skills.py search-github "ai agent skills"
 ```
 
 Goldie's current skills include Final Cut Pro, Premiere Pro, DaVinci Resolve,
