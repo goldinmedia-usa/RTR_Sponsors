@@ -10,8 +10,16 @@ const newChatBtn = document.querySelector("#newChat");
 
 let currentPlan = null;
 let videoSource = { uploaded: false };
-let selectedProviders = new Set(GoldyEngine.DEFAULT_PROVIDERS);
+let selectedProviders = new Set();
 let isThinking = false;
+
+// Safe init — don't crash if engine script failed to load
+if (typeof GoldyEngine !== "undefined" && GoldyEngine.DEFAULT_PROVIDERS) {
+  selectedProviders = new Set(GoldyEngine.DEFAULT_PROVIDERS);
+} else {
+  selectedProviders = new Set(["luma_labs", "flux", "opus_clips"]);
+  console.error("Goldie: goldyEngine.js did not load. Open the app via http://localhost:8080");
+}
 
 const STARTER_PROMPTS = [
   "What can you do?",
@@ -29,6 +37,15 @@ const TOOL_OPTIONS = [
   { id: "higgsfield", label: "Higgsfield" }
 ];
 
+const GENERATION_STEPS = [
+  "Reading your message…",
+  "Finding the best hooks…",
+  "Writing captions…",
+  "Planning your clips…",
+  "Routing visuals to AI tools…",
+  "Packaging your results…"
+];
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -39,6 +56,19 @@ function escapeHtml(value) {
 
 function scrollToBottom() {
   messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function isHelpRequest(text) {
+  const t = text.trim().toLowerCase();
+  return (
+    t === "help" ||
+    t === "?" ||
+    t === "what can you do?" ||
+    t === "what can you do" ||
+    /^what can you do\b/.test(t) ||
+    /^how does goldie work/.test(t) ||
+    /^how does this work/.test(t)
+  );
 }
 
 function addMessage({ role, html, suggestions = [] }) {
@@ -68,20 +98,41 @@ function addMessage({ role, html, suggestions = [] }) {
   return wrap;
 }
 
-function showTyping() {
-  const el = document.createElement("div");
-  el.className = "msg bot";
-  el.id = "typing";
-  el.innerHTML = `
+function addGenerationProgress() {
+  const wrap = document.createElement("div");
+  wrap.className = "msg bot";
+  wrap.id = "gen-progress";
+  wrap.innerHTML = `
     <div class="msg-avatar" aria-hidden="true">G</div>
-    <div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>
+    <div class="msg-bubble">
+      <h3>Generating…</h3>
+      <div class="gen-progress-bar"><div class="gen-progress-fill" id="genFill"></div></div>
+      <ul class="gen-steps" id="genSteps"></ul>
+    </div>
   `;
-  messagesEl.appendChild(el);
+  messagesEl.appendChild(wrap);
   scrollToBottom();
+  return wrap;
 }
 
-function hideTyping() {
-  document.querySelector("#typing")?.remove();
+async function runGenerationAnimation() {
+  const wrap = addGenerationProgress();
+  const stepsEl = wrap.querySelector("#genSteps");
+  const fillEl = wrap.querySelector("#genFill");
+
+  for (let i = 0; i < GENERATION_STEPS.length; i++) {
+    const li = document.createElement("li");
+    li.textContent = GENERATION_STEPS[i];
+    li.className = "gen-step active";
+    stepsEl.appendChild(li);
+    fillEl.style.width = `${((i + 1) / GENERATION_STEPS.length) * 100}%`;
+    scrollToBottom();
+    await new Promise((r) => setTimeout(r, 450));
+    li.classList.remove("active");
+    li.classList.add("done");
+  }
+
+  wrap.remove();
 }
 
 function inferFromMessage(text) {
@@ -104,16 +155,16 @@ function inferFromMessage(text) {
   if (/documentary|interview|podcast|webinar/.test(lowered)) services.add("documentary");
   if (/website|landing/.test(lowered)) services.add("website");
   if (/deck|slide|pitch/.test(lowered)) services.add("decks");
-  if (/what can you|help|how do/.test(lowered)) {
-    return { isHelp: true, services: Array.from(services), providers: Array.from(providers) };
-  }
 
-  return { isHelp: false, services: Array.from(services), providers: Array.from(providers) };
+  return { services: Array.from(services), providers: Array.from(providers) };
 }
 
 function buildPlanFromMessage(text) {
+  if (typeof GoldyEngine === "undefined") {
+    throw new Error("Engine not loaded — open http://localhost:8080 (not the HTML file directly)");
+  }
+
   const inferred = inferFromMessage(text);
-  if (inferred.isHelp) return null;
 
   return GoldyEngine.createGoldyPlan({
     projectName: text.length > 60 ? "Your creative project" : text,
@@ -138,48 +189,77 @@ function buildPlanFromMessage(text) {
 function helpMessage() {
   return `
     <h3>Hey — I'm Goldie 👋</h3>
-    <p>Think of me like ChatGPT for video and ads. You tell me what you want in plain English. I figure out the rest.</p>
-    <p><strong>I can help you:</strong></p>
+    <p>Think of me like ChatGPT for video and ads. Type what you want. I generate clips, captions, and a plan.</p>
+    <p><strong>Try typing:</strong></p>
     <ul>
-      <li>Turn a long video into short TikTok / Reels clips <em>with captions</em></li>
-      <li>Plan a cinematic ad or social campaign</li>
-      <li>Pick the right AI tools (Luma, Runway, Opus Clips, etc.)</li>
-      <li>Write hooks, captions, and a step-by-step edit plan</li>
+      <li>"Turn my video into TikTok clips with captions"</li>
+      <li>"Make a cinematic ad for my coffee shop"</li>
     </ul>
-    <p>Attach a video with 📎 or just type what you need. Tap a suggestion below to start.</p>
+    <p>Or tap a button below to see me generate something right now.</p>
   `;
 }
 
+function renderClipCards(plan) {
+  const hooks = plan.captionPlan?.hooks || ["Stop scrolling.", "This changes everything.", "Watch this."];
+  const angles = plan.campaignAngles || [];
+
+  return hooks.slice(0, 3).map((hook, i) => {
+    const title = angles[i]?.title || `Clip ${i + 1}`;
+    const duration = i === 0 ? "0:15" : i === 1 ? "0:30" : "0:45";
+    const caption = plan.captionPlan?.fullScript?.split(".")[i]?.trim() || hook;
+    return `
+      <article class="clip-card">
+        <div class="clip-thumb" aria-hidden="true">
+          <span class="clip-ratio">9:16</span>
+          <span class="clip-duration">${duration}</span>
+        </div>
+        <div class="clip-info">
+          <strong>${escapeHtml(title)}</strong>
+          <p class="clip-hook">${escapeHtml(hook)}</p>
+          <p class="clip-caption"><em>Caption:</em> ${escapeHtml(caption)}</p>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function renderScenePreviews(plan) {
+  return (plan.storyboard || []).slice(0, 3).map((scene, i) => `
+    <article class="scene-preview">
+      <div class="scene-thumb">Scene ${i + 1}</div>
+      <p><strong>${escapeHtml(scene.beat)}</strong></p>
+      <p class="muted">${escapeHtml(scene.frame)}</p>
+    </article>
+  `).join("");
+}
+
 function formatPlanReply(plan, userText) {
-  const tools = plan.project.providers
+  const tools = (plan.project.providers || [])
     .map((id) => GoldyEngine.PROVIDER_LIBRARY[id]?.name || id)
     .join(", ");
 
-  const steps = [
-    videoSource.uploaded
-      ? `I'll use your video <strong>${escapeHtml(videoSource.fileName)}</strong> as the starting point.`
-      : "Tip: attach a video with 📎 if you want clip + caption suggestions for real footage.",
-    `I'll make short clips for TikTok/Reels${plan.captionPlan ? " with captions like: \"" + escapeHtml(plan.captionPlan.hooks[0]) + "\"" : ""}.`,
-    `For extra visuals (b-roll), I'll route to: <strong>${escapeHtml(tools)}</strong>.`,
-    `You'll get a hero video plan (~${escapeHtml(plan.project.duration)}) plus a simple checklist to finish in Opus, Luma, or your editor.`
-  ];
-
+  const mainHook = plan.campaignAngles[0]?.hook || plan.captionPlan.hooks[0];
   const detailsId = `details-${Date.now()}`;
   const markdown = escapeHtml(plan.markdown.slice(0, 2500) + (plan.markdown.length > 2500 ? "\n…" : ""));
 
   return `
-    <h3>Got it — here's your plan</h3>
+    <h3>✅ Done — here's what I made</h3>
     <p>You asked: <em>"${escapeHtml(userText)}"</em></p>
-    <p><strong>Here's what I'll do:</strong></p>
-    <ul>
-      ${steps.map((s) => `<li>${s}</li>`).join("")}
-    </ul>
-    <p><strong>Your hook line:</strong> ${escapeHtml(plan.campaignAngles[0]?.hook || plan.captionPlan.hooks[0])}</p>
+
+    <p class="gen-label">Your short clips (preview)</p>
+    <div class="clip-grid">${renderClipCards(plan)}</div>
+
+    <p class="gen-label">Storyboard frames (preview)</p>
+    <div class="scene-grid">${renderScenePreviews(plan)}</div>
+
+    <p><strong>Main hook:</strong> ${escapeHtml(mainHook)}</p>
+    <p><strong>Tools I'd use:</strong> ${escapeHtml(tools || "Luma Labs, Opus Clips")}</p>
+
     <div class="msg-actions">
-      <button type="button" class="msg-action" data-action="download">Download full plan</button>
-      <button type="button" class="msg-action" data-action="copy">Copy plan</button>
+      <button type="button" class="msg-action" data-action="download">⬇ Download plan</button>
+      <button type="button" class="msg-action" data-action="copy">📋 Copy plan</button>
     </div>
-    <button type="button" class="details-toggle" data-target="${detailsId}">Show technical details</button>
+    <button type="button" class="details-toggle" data-target="${detailsId}">Show full technical plan</button>
     <div class="details-panel hidden" id="${detailsId}">${markdown}</div>
   `;
 }
@@ -187,19 +267,23 @@ function formatPlanReply(plan, userText) {
 function wireMessageActions(wrap, plan) {
   wrap.querySelectorAll(".msg-action").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      if (btn.dataset.action === "download") {
-        const blob = new Blob([plan.markdown], { type: "text/markdown" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "goldie-plan.md";
-        a.click();
-        URL.revokeObjectURL(url);
-        btn.textContent = "Downloaded ✓";
-      }
-      if (btn.dataset.action === "copy") {
-        await navigator.clipboard.writeText(plan.markdown);
-        btn.textContent = "Copied ✓";
+      try {
+        if (btn.dataset.action === "download") {
+          const blob = new Blob([plan.markdown], { type: "text/markdown" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "goldie-plan.md";
+          a.click();
+          URL.revokeObjectURL(url);
+          btn.textContent = "Downloaded ✓";
+        }
+        if (btn.dataset.action === "copy") {
+          await navigator.clipboard.writeText(plan.markdown);
+          btn.textContent = "Copied ✓";
+        }
+      } catch (err) {
+        btn.textContent = "Try Download instead";
       }
     });
   });
@@ -207,8 +291,8 @@ function wireMessageActions(wrap, plan) {
   wrap.querySelectorAll(".details-toggle").forEach((btn) => {
     btn.addEventListener("click", () => {
       const panel = document.getElementById(btn.dataset.target);
-      const open = panel.classList.toggle("hidden");
-      btn.textContent = open ? "Show technical details" : "Hide technical details";
+      const hidden = panel.classList.toggle("hidden");
+      btn.textContent = hidden ? "Show full technical plan" : "Hide full technical plan";
     });
   });
 }
@@ -217,24 +301,34 @@ async function respondToUser(text) {
   const trimmed = text.trim();
   if (!trimmed) return;
 
-  showTyping();
-  await new Promise((r) => setTimeout(r, 600 + Math.random() * 400));
-  hideTyping();
-
-  const inferred = inferFromMessage(trimmed);
-
-  if (inferred.isHelp) {
+  if (isHelpRequest(trimmed)) {
     addMessage({
       role: "bot",
       html: helpMessage(),
-      suggestions: STARTER_PROMPTS.filter((p) => p !== trimmed)
+      suggestions: STARTER_PROMPTS.filter((p) => p.toLowerCase() !== trimmed.toLowerCase())
     });
     return;
   }
 
-  currentPlan = buildPlanFromMessage(trimmed);
-  const wrap = addMessage({ role: "bot", html: formatPlanReply(currentPlan, trimmed) });
-  wireMessageActions(wrap, currentPlan);
+  try {
+    await runGenerationAnimation();
+    currentPlan = buildPlanFromMessage(trimmed);
+    const wrap = addMessage({ role: "bot", html: formatPlanReply(currentPlan, trimmed) });
+    wireMessageActions(wrap, currentPlan);
+  } catch (err) {
+    console.error(err);
+    addMessage({
+      role: "bot",
+      html: `
+        <h3>Something went wrong</h3>
+        <p>${escapeHtml(err.message || "Could not generate.")}</p>
+        <p><strong>Fix:</strong> Open a Terminal in this folder and run:</p>
+        <pre class="code-block">python3 -m http.server 8080</pre>
+        <p>Then go to <strong>http://localhost:8080</strong> in Chrome (don't double-click the HTML file).</p>
+      `,
+      suggestions: STARTER_PROMPTS
+    });
+  }
 }
 
 function sendUserMessage(text) {
@@ -256,18 +350,37 @@ function sendUserMessage(text) {
 }
 
 function showWelcome() {
+  if (typeof GoldyEngine === "undefined") {
+    addMessage({
+      role: "bot",
+      html: `
+        <h3>⚠️ Goldie needs to be started first</h3>
+        <p>You're probably opening the file directly. That won't work.</p>
+        <p><strong>Do this once:</strong></p>
+        <ol>
+          <li>Open Terminal in this folder</li>
+          <li>Run: <code>python3 -m http.server 8080</code></li>
+          <li>Open <strong>http://localhost:8080</strong> in Chrome</li>
+        </ol>
+        <p>Or double-click <strong>START-GOLDIE.command</strong> (Mac) or <strong>START-GOLDIE.bat</strong> (Windows).</p>
+      `
+    });
+    return;
+  }
+
   addMessage({
     role: "bot",
     html: `
       <h3>Hey — I'm Goldie 👋</h3>
-      <p>Your AI creative assistant. Tell me what you want — like you're texting an editor.</p>
-      <p>Try: <em>"Cut my video into TikTok clips with captions"</em> or attach a video with 📎</p>
+      <p>Type what you want. I'll <strong>generate</strong> clip ideas, captions, and storyboards — you'll see them appear here.</p>
+      <p>Try tapping a button below 👇</p>
     `,
     suggestions: STARTER_PROMPTS
   });
 }
 
 function renderToolChips() {
+  if (!toolChipsEl) return;
   toolChipsEl.innerHTML = TOOL_OPTIONS.map(
     (tool) =>
       `<button type="button" class="tool-chip ${selectedProviders.has(tool.id) ? "active" : ""}" data-tool="${tool.id}">${tool.label}</button>`
@@ -310,7 +423,7 @@ function setAttachedVideo(file) {
     document.querySelector("#removeVideo").addEventListener("click", clearAttachedVideo);
     addMessage({
       role: "bot",
-      html: `<p>Nice — I see your video <strong>${escapeHtml(file.name)}</strong>. Tell me what you want done with it (clips, captions, b-roll, full ad, etc.).</p>`,
+      html: `<p>Got your video <strong>${escapeHtml(file.name)}</strong>. Now tell me what to do — e.g. "make TikTok clips with captions".</p>`,
       suggestions: ["Turn this into TikTok clips with captions", "Make a 60s cinematic ad from this"]
     });
     URL.revokeObjectURL(url);
@@ -359,8 +472,3 @@ newChatBtn.addEventListener("click", resetChat);
 renderToolChips();
 showWelcome();
 chatInput.focus();
-
-// Load skills in background (optional, for future)
-if (typeof GoldieSkills !== "undefined") {
-  GoldieSkills.loadAll().catch(() => {});
-}
