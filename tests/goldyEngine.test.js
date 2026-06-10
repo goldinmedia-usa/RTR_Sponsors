@@ -2,7 +2,9 @@ const assert = require("node:assert/strict");
 const {
   createGoldyPlan,
   normalizeProject,
-  SERVICE_LIBRARY
+  SERVICE_LIBRARY,
+  DEFAULT_PROVIDERS,
+  PROVIDER_LIBRARY
 } = require("../src/goldyEngine");
 
 function testDefaults() {
@@ -37,15 +39,46 @@ function testPlanIncludesProductionOutputs() {
   assert.equal(plan.storyboard.length, 6);
   assert.ok(plan.storyboard.some((scene) => scene.frame.includes("close-up")));
   assert.ok(plan.promptPack.masterVideoPrompt.includes("4K cinematic"));
-  assert.ok(plan.audioPlan.narrationScript.includes("Goldy"));
+  assert.ok(plan.audioPlan.narrationScript.includes("Goldie"));
   assert.ok(plan.websiteBuild.sections.length >= 6);
   assert.ok(plan.deckSpec.slides.length >= 8);
   assert.ok(plan.assetReplacement.auditChecklist.includes("Resolution and aspect ratio"));
+  assert.ok(plan.videoEdit.autonomousTimeline.length >= 4);
+  assert.ok(plan.captionPlan.opusClipsNotes.length >= 3);
+  assert.ok(plan.providerHandoffs.length >= 1);
+  assert.ok(plan.autonomousPipeline.stages.length >= 4);
   assert.ok(plan.markdown.includes("# Client Film Pack"));
+  assert.ok(plan.markdown.includes("Provider Handoffs"));
+}
+
+function testProviderDefaults() {
+  const project = normalizeProject({});
+  assert.deepEqual(project.providers, DEFAULT_PROVIDERS);
+  assert.ok(project.providers.includes("luma_labs"));
+  assert.equal(PROVIDER_LIBRARY.luma_labs.role, "primary-creative-agent");
+}
+
+function testVideoSourceInPlan() {
+  const plan = createGoldyPlan({
+    videoSource: {
+      fileName: "webinar.mp4",
+      duration: 1842,
+      width: 1920,
+      height: 1080,
+      hasAudio: true,
+      uploaded: true
+    },
+    providers: ["luma_labs", "opus_clips", "flux"]
+  });
+
+  assert.ok(plan.videoEdit.sourceSummary.includes("webinar.mp4"));
+  assert.equal(plan.providerHandoffs.length, 3);
 }
 
 testDefaults();
 testInvalidServicesAreIgnored();
 testPlanIncludesProductionOutputs();
+testProviderDefaults();
+testVideoSourceInPlan();
 
-console.log("Goldy engine tests passed");
+console.log("Goldie engine tests passed");

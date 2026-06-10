@@ -3,308 +3,57 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta
-      name="description"
-      content="Goldy is a Goldin Media creative production agent for cinematic campaigns, social packs, storyboards, audio direction, and editable pitch assets."
-    >
-    <title>Goldy | Goldin Media Creative Agent</title>
+    <meta name="description" content="Goldie — chat with your AI creative assistant. Edit videos, make clips, captions, and ads.">
+    <title>Goldie</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <header class="site-header">
-      <a class="brand" href="#top" aria-label="Goldy home">
-        <span class="brand-mark">G</span>
-        <span>
-          <strong>Goldy</strong>
-          <small>Goldin Media agent</small>
-        </span>
-      </a>
-      <nav aria-label="Page navigation">
-        <a href="#interface">Interface</a>
-        <a href="#studio">Setup</a>
-        <a href="#capabilities">Capabilities</a>
-        <a href="#output">View</a>
-      </nav>
-    </header>
-
-    <main id="top">
-      <section class="hero">
-        <div class="hero-copy">
-          <span class="eyebrow">Full-service creative production assistant</span>
-          <h1>Make it cinematic. Make it marketable. Make it Golden.</h1>
-          <p>
-            Goldy turns a client brief, website, or asset list into a premium production plan:
-            social packs, 4K storyboard prompts, voiceover scripts, sound direction,
-            editable deck outlines, and website-ready campaign systems.
-          </p>
-          <div class="hero-actions">
-            <a class="button primary" href="#interface">Open the interface</a>
-            <button class="button ghost" id="quickStart" type="button">Load sample view</button>
-          </div>
+    <div class="app">
+      <aside class="sidebar" aria-label="Sidebar">
+        <div class="sidebar-top">
+          <a class="brand" href="/" aria-label="Goldie home">
+            <span class="brand-mark">G</span>
+            <strong>Goldie</strong>
+          </a>
+          <button class="icon-btn" id="newChat" type="button" title="New chat">+</button>
         </div>
-        <aside class="hero-card" aria-label="Goldy production promise">
-          <div class="orb"></div>
-          <span class="eyebrow">Goldy says</span>
-          <p>
-            "Give me the offer, the audience, the assets, and the feeling.
-            I will build the campaign spine, shots, prompts, edits, audio, and packaging."
-          </p>
-          <ul>
-            <li>Black-and-gold luxury art direction</li>
-            <li>Close-ups, drama, realism, and story</li>
-            <li>Marketing-first hooks and CTAs</li>
-            <li>Dependency-free, bring-your-own tools</li>
-          </ul>
-        </aside>
-      </section>
-
-      <section class="agent-interface" id="interface" aria-labelledby="interface-title">
-        <div class="interface-panel command-panel">
-          <span class="eyebrow">Goldy command view</span>
-          <h2 id="interface-title">Ask for the whole production</h2>
-          <p>
-            Type what you want in plain language. Goldy will turn the ask into a working
-            production view with strategy, storyboards, prompts, social assets, audio,
-            deck structure, and website direction.
-          </p>
-          <label class="command-box">
-            What should Goldy build?
-            <textarea
-              id="commandPrompt"
-              rows="6"
-              placeholder="Example: Goldy, build a luxury black-and-gold social media pack and cinematic 4K launch video for a client from their website. Include close-ups, storyboards, voiceover, sound design, deck slides, website hero, and editable prompts."
-            ></textarea>
-          </label>
-          <div class="hero-actions">
-            <button class="button primary" id="runCommand" type="button">Ask Goldy</button>
-            <button class="button ghost" id="sampleAsk" type="button">Use sample ask</button>
-            <a class="button ghost" href="#studio">Open setup controls</a>
-          </div>
-          <p class="interface-status" id="interfaceStatus">
-            Goldy is standing by. Ask for a campaign, trailer, storyboard, website, documentary,
-            deck, or social pack.
-          </p>
+        <p class="sidebar-hint">Your creative AI. Just type what you want — like texting a pro editor.</p>
+        <div class="tool-section">
+          <span class="section-label">Quick tools</span>
+          <div class="tool-chips" id="toolChips"></div>
         </div>
+        <input type="file" id="videoUpload" accept="video/*" hidden>
+      </aside>
 
-        <div class="interface-panel view-screen" aria-label="Goldy production dashboard">
-          <div class="screen-topbar">
-            <span></span>
-            <span></span>
-            <span></span>
-            <strong>Goldy View</strong>
-          </div>
-          <div class="view-meter">
-            <span>Strategy</span>
-            <div><i style="width: 92%"></i></div>
-          </div>
-          <div class="view-meter">
-            <span>Storyboard</span>
-            <div><i style="width: 86%"></i></div>
-          </div>
-          <div class="view-meter">
-            <span>Prompts</span>
-            <div><i style="width: 94%"></i></div>
-          </div>
-          <div class="timeline-preview">
-            <article>
-              <small>01</small>
-              <strong>Hook close-up</strong>
-              <p>Macro texture, dramatic gold rim, hard attention break.</p>
-            </article>
-            <article>
-              <small>02</small>
-              <strong>Problem pressure</strong>
-              <p>Real client tension, editorial composition, controlled shadows.</p>
-            </article>
-            <article>
-              <small>03</small>
-              <strong>Proof montage</strong>
-              <p>Results, testimonials, cinematic product/service details.</p>
-            </article>
-            <article>
-              <small>04</small>
-              <strong>CTA finish</strong>
-              <p>Black-and-gold logo resolve, premium title, clean next step.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="capabilities" id="capabilities" aria-labelledby="capabilities-title">
-        <div>
-          <span class="eyebrow">Built-in skills</span>
-          <h2 id="capabilities-title">A production agency brain in one page</h2>
-        </div>
-        <div class="capability-grid">
-          <article>
-            <h3>Campaign strategy</h3>
-            <p>Clarifies audience tension, offer hierarchy, story angle, and conversion CTA.</p>
-          </article>
-          <article>
-            <h3>Cinematic storyboard</h3>
-            <p>Creates scene cards with close-ups, camera movement, lighting, edit beats, and prompts.</p>
-          </article>
-          <article>
-            <h3>Prompt studio</h3>
-            <p>Packages image, video, motion, negative, voice, and typography prompts for your tools.</p>
-          </article>
-          <article>
-            <h3>Social media packs</h3>
-            <p>Maps one hero idea into Reels, Shorts, carousel, trailer, LinkedIn, and website cuts.</p>
-          </article>
-          <article>
-            <h3>Audio and narration</h3>
-            <p>Drafts voiceover, voice direction, music mood, room tone, impacts, and sound accents.</p>
-          </article>
-          <article>
-            <h3>Decks and websites</h3>
-            <p>Builds editable slide outlines, landing page sections, animation cues, and proof blocks.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="studio-shell" id="studio" aria-labelledby="studio-title">
-        <div class="studio-heading">
+      <main class="chat" id="chat">
+        <header class="chat-header">
           <div>
-            <span class="eyebrow">Goldy Studio</span>
-            <h2 id="studio-title">Tell Goldy what to design</h2>
+            <h1>Chat with Goldie</h1>
+            <p>Upload a video or describe what you want. I'll plan the edit, clips, captions, and visuals.</p>
           </div>
-          <p>
-            This app creates original creative direction and production prompts. It does not copy
-            paid platforms or bypass subscriptions; use the exports with your own approved tools,
-            local models, editors, and client assets.
-          </p>
+        </header>
+
+        <div class="messages" id="messages" aria-live="polite"></div>
+
+        <div class="composer-wrap">
+          <div class="attached-file hidden" id="attachedFile" aria-live="polite"></div>
+          <form class="composer" id="chatForm">
+            <button class="icon-btn attach-btn" id="attachVideo" type="button" title="Attach video">📎</button>
+            <textarea
+              id="chatInput"
+              rows="1"
+              placeholder="Tell Goldie what you want… e.g. “Cut my video into TikTok clips with captions”"
+              aria-label="Message Goldie"
+            ></textarea>
+            <button class="send-btn" id="sendBtn" type="submit" aria-label="Send">↑</button>
+          </form>
+          <p class="composer-note">Goldie plans your edit. Connect Luma, Runway, or Opus later to run it for real.</p>
         </div>
-
-        <form id="goldyForm" class="studio-form">
-          <fieldset>
-            <legend>Project basics</legend>
-            <div class="form-grid">
-              <label>
-                Project name
-                <input id="projectName" name="projectName" type="text" placeholder="Goldin Media client launch">
-              </label>
-              <label>
-                Agency / brand
-                <input id="brandName" name="brandName" type="text" value="Goldin Media">
-              </label>
-              <label>
-                Client name
-                <input id="clientName" name="clientName" type="text" placeholder="Client or company">
-              </label>
-              <label>
-                Website or source notes
-                <input id="website" name="website" type="text" placeholder="URL, pasted site copy, or discovery notes">
-              </label>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Creative intent</legend>
-            <label>
-              What do you want Goldy to make?
-              <textarea
-                id="goal"
-                name="goal"
-                rows="4"
-                placeholder="Example: build a cinematic social campaign, 4K hero video, storyboards, website hero, and pitch deck for a luxury client."
-              ></textarea>
-            </label>
-            <div class="form-grid">
-              <label>
-                Audience
-                <input id="audience" name="audience" type="text" placeholder="Who this campaign must move">
-              </label>
-              <label>
-                Offer / product / transformation
-                <input id="offer" name="offer" type="text" placeholder="What the campaign is selling">
-              </label>
-              <label>
-                Duration
-                <input id="duration" name="duration" type="text" value="60 seconds with shorter cutdowns">
-              </label>
-              <label>
-                Visual tone
-                <select id="tone" name="tone"></select>
-              </label>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Source assets and references</legend>
-            <label>
-              Photos, video, logos, copy, or replacement assets
-              <textarea
-                id="assets"
-                name="assets"
-                rows="3"
-                placeholder="List the files or describe what Goldy should create, replace, or remix."
-              ></textarea>
-            </label>
-            <label>
-              Creative references
-              <textarea
-                id="references"
-                name="references"
-                rows="3"
-                placeholder="Describe the visual energy, genres, films, brands, or campaign styles you like."
-              ></textarea>
-            </label>
-          </fieldset>
-
-          <fieldset>
-            <legend>Production skills</legend>
-            <div class="choice-grid" id="serviceGrid"></div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Formats and controls</legend>
-            <div class="choice-grid compact" id="ratioGrid"></div>
-            <div class="toggle-row">
-              <label class="toggle">
-                <input id="mustIncludeCloseups" type="checkbox" checked>
-                <span>Include close-ups and detailed realism</span>
-              </label>
-              <label class="toggle">
-                <input id="includeWebsiteBuild" type="checkbox" checked>
-                <span>Include website / landing page buildout</span>
-              </label>
-            </div>
-          </fieldset>
-
-          <div class="form-actions">
-            <button class="button primary" type="submit">Generate with Goldy</button>
-            <button class="button ghost" id="newPlan" type="button" disabled>Start over</button>
-          </div>
-        </form>
-      </section>
-
-      <section class="output-toolbar" aria-label="Output actions">
-        <div>
-          <span class="eyebrow">Production view</span>
-          <h2>Your working interface</h2>
-        </div>
-        <div class="toolbar-actions">
-          <button class="button ghost" id="copyPlan" type="button" disabled>Copy plan</button>
-          <button class="button ghost" id="downloadPlan" type="button" disabled>Download markdown</button>
-        </div>
-      </section>
-
-      <section id="output" class="output" aria-live="polite">
-        <section class="empty-state">
-          <p>Ask Goldy in the interface above. Your working production view will appear here.</p>
-        </section>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <p>
-        Goldy creates original strategy, prompts, and production plans for Goldin Media.
-        Bring your own approved models, footage, audio tools, editors, and client permissions.
-      </p>
-    </footer>
+      </main>
+    </div>
 
     <script src="src/goldyEngine.js"></script>
+    <script src="src/skillsLoader.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

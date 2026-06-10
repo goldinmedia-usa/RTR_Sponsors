@@ -1,0 +1,167 @@
+{
+  "primaryCreativeAgent": "luma_labs",
+  "providers": [
+    {
+      "id": "luma_labs",
+      "name": "Luma Labs",
+      "category": "video-generation",
+      "role": "primary-creative-agent",
+      "status": "enabled",
+      "tagline": "Dream Machine — cinematic image-to-video and text-to-video",
+      "bestFor": ["hero b-roll", "start frames", "end frames", "cinematic motion", "4K look development"],
+      "integrations": ["Luma Dream Machine", "Luma API", "image-to-video", "text-to-video"],
+      "strengths": ["natural camera motion", "coherent scenes", "strong start/end frame control"],
+      "workflow": [
+        "Generate key still frames in Flux or Nano Banana Pro.",
+        "Use start frame + end frame in Luma for controlled motion between beats.",
+        "Iterate on camera path, duration, and aspect ratio per platform cut."
+      ],
+      "promptTips": "Describe camera move, lens, lighting, and subject continuity. Pair with explicit start/end stills for best control.",
+      "goldyServices": ["cinematic", "storyboard", "replacement"]
+    },
+    {
+      "id": "runway",
+      "name": "Runway",
+      "category": "video-generation",
+      "role": "motion-finishing",
+      "status": "enabled",
+      "tagline": "Gen-3 / Gen-4 Alpha — premium motion and inpainting",
+      "bestFor": ["hero shots", "product motion", "inpaint extensions", "lip-sync adjacent cuts"],
+      "integrations": ["Runway Gen-3 Alpha", "Runway Gen-4", "Motion Brush", "Expand Video"],
+      "strengths": ["motion brush control", "high polish", "extend and interpolate clips"],
+      "workflow": [
+        "Import start frame or short plate.",
+        "Apply motion brush to subject vs background separately.",
+        "Extend clips to hit storyboard duration targets."
+      ],
+      "promptTips": "Keep prompts short and motion-focused. Use negative space for typography overlays in post.",
+      "goldyServices": ["cinematic", "replacement", "social"]
+    },
+    {
+      "id": "kling",
+      "name": "Kling",
+      "category": "video-generation",
+      "role": "long-form-motion",
+      "status": "enabled",
+      "tagline": "Kling AI — long clips, strong human motion",
+      "bestFor": ["longer b-roll", "human performance", "documentary inserts", "multi-beat scenes"],
+      "integrations": ["Kling 1.6", "Kling 2.0", "image-to-video", "text-to-video"],
+      "strengths": ["longer generations", "realistic human movement", "good for montage plates"],
+      "workflow": [
+        "Generate 5–10s plates per storyboard beat.",
+        "Use reference images for wardrobe and set continuity.",
+        "Cut down in Opus Clips or NLE for platform versions."
+      ],
+      "promptTips": "Specify wardrobe, time of day, and emotional beat. Reference prior frame for continuity.",
+      "goldyServices": ["cinematic", "documentary", "storyboard"]
+    },
+    {
+      "id": "seedance",
+      "name": "SeaDance",
+      "category": "video-animation",
+      "role": "dance-and-rhythm",
+      "status": "enabled",
+      "tagline": "ByteDance SeaDance — rhythmic motion and performance",
+      "bestFor": ["performance clips", "rhythmic montage", "social hooks", "music-driven edits"],
+      "integrations": ["SeaDance", "image-to-video", "audio-reactive workflows"],
+      "strengths": ["expressive body motion", "music-sync friendly outputs", "vertical social energy"],
+      "workflow": [
+        "Lock music bed or click track first.",
+        "Generate performance plates on beat markers.",
+        "Cut to Opus-style shorts with caption overlays."
+      ],
+      "promptTips": "Mention tempo, choreography style, and camera distance (wide vs close).",
+      "goldyServices": ["social", "cinematic"]
+    },
+    {
+      "id": "cling",
+      "name": "Cling",
+      "category": "video-animation",
+      "role": "character-motion",
+      "status": "enabled",
+      "tagline": "Cling Video — character-consistent motion from stills",
+      "bestFor": ["character continuity", "animate still frames", "avatar-style scenes", "looping social clips"],
+      "integrations": ["Cling", "image-to-video", "character reference"],
+      "strengths": ["identity preservation", "short loop-friendly output", "fast iteration"],
+      "workflow": [
+        "Approve hero still in Flux or Nano Banana Pro.",
+        "Animate with Cling using minimal camera change for loops.",
+        "Export platform loops for website hero and paid social."
+      ],
+      "promptTips": "Freeze wardrobe and hairstyle in the still; prompt only motion and expression changes.",
+      "goldyServices": ["social", "replacement", "website"]
+    },
+    {
+      "id": "flux",
+      "name": "Flux",
+      "category": "image-generation",
+      "role": "key-art-and-frames",
+      "status": "enabled",
+      "tagline": "Black Forest Labs Flux — photoreal key art and start/end frames",
+      "bestFor": ["4K stills", "start frames", "end frames", "storyboard frames", "product hero shots"],
+      "integrations": ["Flux Pro", "Flux Dev", "Flux Schnell", "ComfyUI", "API hosts"],
+      "strengths": ["photoreal stills", "typography-safe compositions", "fast iteration"],
+      "workflow": [
+        "Generate scene stills per storyboard beat.",
+        "Upscale and retouch in Photoshop if needed.",
+        "Feed approved stills to Luma, Runway, Kling, or Cling for motion."
+      ],
+      "promptTips": "Use master image prompt + negative prompt from Goldie. Specify lens, film stock, and lighting direction.",
+      "goldyServices": ["storyboard", "replacement", "decks"]
+    },
+    {
+      "id": "nano_banana_pro",
+      "name": "Nano Banana Pro",
+      "category": "image-generation",
+      "role": "4k-frame-lab",
+      "status": "enabled",
+      "tagline": "4K frame lab for start/end plates and macro product detail",
+      "bestFor": ["4K macro close-ups", "product texture", "start/end frames", "thumbnail stills"],
+      "integrations": ["Nano Banana Pro", "4K still pipeline", "frame export"],
+      "strengths": ["extreme detail", "macro product shots", "clean edges for compositing"],
+      "workflow": [
+        "Generate macro and product stills for hook frames.",
+        "Use as first/last frame for Luma or Runway motion.",
+        "Pull stills into Opus Clips as thumbnail sources."
+      ],
+      "promptTips": "Request shallow depth of field, hard rim light, and material-specific texture language.",
+      "goldyServices": ["storyboard", "social", "replacement"]
+    },
+    {
+      "id": "higgsfield",
+      "name": "Higgsfield",
+      "category": "ai-creative-generation",
+      "role": "plugin-scenes",
+      "status": "enabled",
+      "tagline": "Higgsfield plug-ins — themed scene and campaign packs",
+      "bestFor": ["campaign scene packs", "social themes", "rapid concept exploration", "plug-in workflows"],
+      "integrations": ["Higgsfield", "plug-in library", "prompt packs"],
+      "strengths": ["fast themed variations", "campaign-ready scene packs", "social-first outputs"],
+      "workflow": [
+        "Map Goldie storyboard beats to Higgsfield plug-in themes.",
+        "Generate variations per platform ratio.",
+        "Select finals and hand off to NLE or Opus Clips."
+      ],
+      "promptTips": "Lead with brand palette, campaign angle, and plug-in theme name.",
+      "goldyServices": ["social", "cinematic", "replacement"]
+    },
+    {
+      "id": "opus_clips",
+      "name": "Opus Clips",
+      "category": "clip-editing",
+      "role": "short-form-autocut",
+      "status": "enabled",
+      "tagline": "Long-form to viral shorts with AI captions",
+      "bestFor": ["long-to-short clipping", "auto captions", "viral hooks", "podcast and webinar repurposing"],
+      "integrations": ["Opus Clips", "auto reframe", "caption styles", "virality score"],
+      "strengths": ["caption automation", "hook detection", "multi-platform export"],
+      "workflow": [
+        "Upload source long-form video or Goldie rough assembly.",
+        "Select clip count, duration targets, and caption style.",
+        "Review AI-suggested hooks; export vertical cuts with burned-in captions."
+      ],
+      "promptTips": "Feed Goldie-generated hook lines and CTA text as caption guidance where supported.",
+      "goldyServices": ["social", "documentary", "audio"]
+    }
+  ]
+}
