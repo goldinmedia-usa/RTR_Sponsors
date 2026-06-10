@@ -4,6 +4,7 @@
   "description": "Goldy, a Goldin Media creative production agent for campaign packs, cinematic storyboards, and production prompts.",
   "private": true,
   "scripts": {
+    "export": "node scripts/export-app.js",
     "test": "node tests/goldyEngine.test.js"
   },
   "keywords": [

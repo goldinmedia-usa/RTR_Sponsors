@@ -8,6 +8,12 @@
       content="Goldy is a Goldin Media creative production agent for cinematic campaigns, social packs, storyboards, audio direction, and editable pitch assets."
     >
     <title>Goldy | Goldin Media Creative Agent</title>
+    <meta name="theme-color" content="#070604">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Goldy">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icons/goldy-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icons/goldy-icon.svg">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -24,6 +30,7 @@
         <a href="#studio">Setup</a>
         <a href="#capabilities">Capabilities</a>
         <a href="#output">View</a>
+        <button class="nav-install" id="installApp" type="button" hidden>Install app</button>
       </nav>
     </header>
 
@@ -40,6 +47,7 @@
           <div class="hero-actions">
             <a class="button primary" href="#interface">Open the interface</a>
             <button class="button ghost" id="quickStart" type="button">Load sample view</button>
+            <button class="button ghost" id="heroInstallApp" type="button" hidden>Install Goldy app</button>
           </div>
         </div>
         <aside class="hero-card" aria-label="Goldy production promise">

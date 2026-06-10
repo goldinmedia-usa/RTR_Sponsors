@@ -8,11 +8,13 @@ const commandPrompt = document.querySelector("#commandPrompt");
 const runCommandButton = document.querySelector("#runCommand");
 const sampleAskButton = document.querySelector("#sampleAsk");
 const interfaceStatus = document.querySelector("#interfaceStatus");
+const installButtons = [document.querySelector("#installApp"), document.querySelector("#heroInstallApp")];
 const copyButton = document.querySelector("#copyPlan");
 const downloadButton = document.querySelector("#downloadPlan");
 const newButton = document.querySelector("#newPlan");
 
 let currentPlan = null;
+let deferredInstallPrompt = null;
 
 const SAMPLE_ASK =
   "Goldy, build a luxury black-and-gold social media pack and cinematic 4K launch video for a premium client from their website. Include close-ups, storyboards, voiceover, sound design, deck slides, website hero, editable prompts, dramatic lighting, and marketing CTAs.";
@@ -450,3 +452,47 @@ newButton.addEventListener("click", () => {
 });
 
 hydrateControls();
+
+function setInstallButtonsVisible(isVisible) {
+  installButtons.forEach((button) => {
+    if (!button) return;
+    button.hidden = !isVisible;
+  });
+}
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  setInstallButtonsVisible(true);
+});
+
+installButtons.forEach((button) => {
+  if (!button) return;
+  button.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) {
+      interfaceStatus.textContent =
+        "If your browser does not show an install prompt, use the browser menu and choose Install app or Add to Home Screen.";
+      return;
+    }
+
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    setInstallButtonsVisible(false);
+  });
+});
+
+window.addEventListener("appinstalled", () => {
+  deferredInstallPrompt = null;
+  setInstallButtonsVisible(false);
+  interfaceStatus.textContent = "Goldy is installed as an app on this device.";
+});
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {
+      interfaceStatus.textContent =
+        "Goldy still works in the browser, but offline app caching could not be enabled here.";
+    });
+  });
+}

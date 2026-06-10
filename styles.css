@@ -118,7 +118,17 @@ nav a {
   border-radius: 999px;
 }
 
-nav a:hover {
+.nav-install {
+  padding: 0.5rem 0.8rem;
+  border: 1px solid rgba(245, 200, 91, 0.44);
+  border-radius: 999px;
+  background: rgba(245, 200, 91, 0.1);
+  color: var(--gold);
+  cursor: pointer;
+}
+
+nav a:hover,
+.nav-install:hover {
   border-color: var(--line);
   color: var(--gold);
 }
