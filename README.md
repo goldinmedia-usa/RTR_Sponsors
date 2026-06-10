@@ -10,7 +10,7 @@ Upload a video, click your AI stack, and Goldie plans autonomous edits: Opus-sty
 python3 -m http.server 8080
 ```
 
-Open `http://localhost:8080` (a static server is required to load the skills registry).
+Open `http://localhost:8080` — you'll get a **chat interface** (like Gemini). Just type what you want or tap a suggestion.
 
 ## Test
 

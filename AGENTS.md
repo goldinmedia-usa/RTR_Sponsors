@@ -4,7 +4,7 @@ Guidance for AI agents working in the **Goldie** unified creative platform.
 
 ## Product
 
-One website: **Goldy + Goldie merged**. The SPA loads `goldie/skills.json` and `goldie/providers.json` at runtime. **Luma Labs** is the primary creative agent in `providers.json`.
+**Chat-first UI** — users talk to Goldie like Gemini/Higgsfield. No studio forms. The engine (`goldyEngine.js`) runs behind the scenes; responses are plain-language summaries with optional "technical details" expand.
 
 ## Run (dev)
 
