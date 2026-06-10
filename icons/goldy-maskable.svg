@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Goldy maskable app icon</title>
+  <desc id="desc">A safe-area black and gold Goldy logo for app launchers.</desc>
+  <defs>
+    <radialGradient id="bg" cx="38%" cy="22%" r="78%">
+      <stop offset="0%" stop-color="#fff2b7"/>
+      <stop offset="32%" stop-color="#f5c85b"/>
+      <stop offset="70%" stop-color="#7a5720"/>
+      <stop offset="100%" stop-color="#070604"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="#070604"/>
+  <circle cx="256" cy="256" r="240" fill="url(#bg)" opacity="0.92"/>
+  <circle cx="256" cy="256" r="156" fill="#070604"/>
+  <path
+    fill="#f5c85b"
+    d="M270 142c42 0 77 15 105 45l-47 50c-15-17-35-26-58-26-20 0-36 7-49 20-14 13-20 30-20 51 0 22 7 40 21 53 15 13 33 20 55 20 20 0 37-5 51-15v-29h-66v-65h140v131c-15 15-34 27-57 36-23 10-48 14-76 14-43 0-79-13-107-40-28-26-42-61-42-103s14-76 42-102c28-27 64-40 108-40Z"
+  />
+</svg>

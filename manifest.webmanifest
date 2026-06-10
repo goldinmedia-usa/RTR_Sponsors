@@ -1,0 +1,54 @@
+{
+  "name": "Goldy Creative Agent",
+  "short_name": "Goldy",
+  "description": "Goldin Media's installable creative production assistant for campaigns, storyboards, prompts, audio, decks, and websites.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#070604",
+  "theme_color": "#070604",
+  "categories": ["business", "productivity", "photo", "video"],
+  "icons": [
+    {
+      "src": "icons/goldy-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/goldy-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Open Goldy Interface",
+      "short_name": "Interface",
+      "description": "Ask Goldy to build a production package.",
+      "url": "./index.html#interface",
+      "icons": [
+        {
+          "src": "icons/goldy-icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Open Production View",
+      "short_name": "View",
+      "description": "Jump to the generated production view.",
+      "url": "./index.html#output",
+      "icons": [
+        {
+          "src": "icons/goldy-icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}
